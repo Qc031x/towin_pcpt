@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+ default-lazy-init="false">
+  
+	<!-- task -->
+	<!-- 定义了一个任务 -->
+	<bean id="quartzClock" class="org.springframework.scheduling.quartz.JobDetailBean">
+	   <property name="jobClass">
+	    <value>com.sgfm.datacenter.quartz.DimingUpdateAllCache</value>
+	   </property>
+	</bean>
+	
+	<bean id="quartzClock2" class="org.springframework.scheduling.quartz.JobDetailBean">
+	   <property name="jobClass">
+	    <value>com.sgfm.datacenter.quartz.DimingUpdateSectionCache</value>
+	   </property>
+	</bean>
+
+   
+	<!-- 这种配置可以精确几点执行定时任务 -->
+ 	<!-- 定义了任务的执行方式 -->
+	<bean id="cronQuartzClock" class="org.springframework.scheduling.quartz.CronTriggerBean" >
+	   <property name="jobDetail">
+	    <ref bean="quartzClock"></ref>
+	   </property>
+	   
+	   <property name="cronExpression">
+	    <value>0 0 3 4/4 * ? </value> <!-- 服务启动之后，从第四天开始执行任务，之后每四天执行一次-->
+	   </property>
+	</bean>
+	
+	
+	<!-- 服务启动半小时秒之后运行  然后每一个小时执行一次任务 -->
+	<bean id="quartzClockTask" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	    <property name="jobDetail">
+	     <ref bean="quartzClock2"/>
+	    </property>
+	    
+	    <property name="startDelay"><!--这里是服务启动后延时多少时间,开始计时任务,单位ms-->
+	     <value>3600000</value>  
+	    </property>
+	    
+	    <property name="repeatInterval"><!--这里是每隔多长时间就进行一次计时任务,单位ms-->
+	     <value>3600000</value>  
+	    </property>
+    </bean>
+  
+	<!--第三步 启动定时任务,注意这里的ref bean -->
+	<bean  id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	   <property name="triggers">
+	    <list>
+	     <ref bean="cronQuartzClock"></ref>
+	     <ref bean="quartzClockTask"></ref>
+	    </list>
+	   </property>
+	</bean>
+   
+</beans>

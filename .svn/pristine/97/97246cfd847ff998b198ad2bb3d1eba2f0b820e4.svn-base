@@ -1,0 +1,162 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="/WEB-INF/content/public/tags.jsp" %>
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/idangerous.js"></script>
+    <script type="text/javaScript" src="js/jsrender.js"></script>
+    <script type="text/javascript" src="js/commonLib.js"></script>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    
+    <title>首页</title>
+<script>
+$(document).ready(function () {
+   
+    
+});
+
+</script>
+</head>
+<body>
+<div id="main" class="main" style="height: auto;">
+    <div class="header">
+        <div class="wrap">
+            <a href="/core/product.toCity.do" class="area">${cityname_revpt }</a>
+            <a href="/core/user.valiLoginInfo.do" class="personbtn"><img src="images/use.png" alt=""></a>
+            <a href="/core/product.toSearch.do" class="searcher">
+                <span>搜索套餐机构</span>
+                <span class="searchbtn"></span>
+            </a>
+        </div>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="topblank"></div>
+
+    <div class="banner">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+            	<c:forEach items="${bannerList}" var="mapItem" varStatus="index">
+            		<div class="swiper-slide"><a href="${mapItem['phoneLink']}"><img src="${ctxPc}/${mapItem['picture']}"/></a></div>
+		        </c:forEach> 
+            </div>
+            <div class="pagination" style="display:block;"></div>
+        </div>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="banbotbox">
+        <div class="banbot banbot1">
+            <a href="/core/product.toProductListPage.do">
+                <img src="images/banbot1.png" class="banbot_img1" alt="">
+                <span>预约体检</span>
+            </a>
+        </div>
+        <div class="banbot">
+            <div class="banbot_l">
+                <a href="/content/product.cardList.do">
+                    <img src="images/banbot2.png" class="banbot_img2" alt="">
+                    <span>团体询价</span>
+                </a>
+            </div>
+            <div class="banbot_l">
+                <a href="/content/reservation.rs_login.do">
+                    <img src="images/banbot3.png" class="banbot_img2" alt="">
+                    <span>卡密预约</span>
+                </a>   
+            </div>
+        </div>
+    </div>
+
+    <div class="clear"></div>
+    
+	<c:if test="${!empty productTypeList}" >
+    <div class="hotsal">
+        <div class="line"></div>
+        <span>热销推荐</span>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="protiplist">
+        <table>
+            <tbody>
+            <tr>
+	           	<c:forEach items="${productTypeList}" var="category" varStatus="index">
+	           		<c:if test="${index.index == 0}">
+	           			<td><a href="javascript:;" class="active" onclick="showProduct(${category.DID })"><span>${category.DISTRIBUTIONNAME }</span></a></td>
+	           		</c:if>
+	           		<c:if test="${index.index != 0 && index.index<4}">
+	           			<td><a href="javascript:;" onclick="showProduct(${category.DID })"><span>${category.DISTRIBUTIONNAME }</span></a></td>
+	           		</c:if>
+	           	</c:forEach>
+            </tr>
+            <tr>
+            	<c:forEach items="${productTypeList}" var="category" varStatus="index">
+	            	<c:if test="${index.index >= 4 && index.index<7}">
+	           			<td><a href="javascript:;" onclick="showProduct(${category.DID })"><span>${category.DISTRIBUTIONNAME }</span></a></td>
+	           		</c:if>
+           		</c:forEach>
+                <td><a href="${ctx}/core/product.toMallProductList.do"><i>更多...</i></a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+	</c:if>
+    <div class="clear"></div>
+    
+    <c:forEach items="${productTypeList}" var="category" varStatus="index">
+   			<div class="prolist" hidden="display" id="list${category.DID }"></div>
+   	</c:forEach>
+   	
+   	<script id="productInfo" type="text/x-jsrender">
+			{{for}}
+				<div class="list">
+		            <a style="overflow: hidden; display: block;" href="/core/product.toMallProductDetail.do?product.pid={{:PID}}">
+		                <div class="imgbox">
+		                    <img src="${ctxPc}/card/{{:BACKGROUND_FOLDER}}/{{:BACKGROUND_IMG}}" alt="">
+		                    <span class="imgleft">{{:LABLE_WORDS}}</span>
+							{{if DISCOUNT > 0 && DISCOUNT < 10}}
+                 				<span class="imgright"> {{:DISCOUNT}}折</span>
+               				{{/if}}
+		                    <div class="recommend">
+		                        <p class="rectitle">{{:MAIN_TITLE}}</p>
+		                        <p>{{:SUB_TITLE1}}</p>
+		                        <p>{{:SUB_TITLE2}}</p>
+		                    </div>
+		                </div>
+		                <div class="info">
+		                    <h3 class="titlebox">{{:PNAME}}
+							{{if SEX == 0 || SEX == 5}}
+								(男/女 )
+		                    {{else SEX == 6}}
+								(男)
+							{{else SEX == 16}}
+								(女)
+							{{else SEX == 18}}
+								(未婚女)
+		                    {{else}}
+		                    {{/if}}
+							</h3>
+		                    <p class="info_col">{{:BNAME}}</p>
+		                    <p class="info_bor"><span class="nowpla">{{:SHOP_PRICE}}</span><span class="ordered">已售：<span style="color: #ff8f00;">{{:COUNT}}</span></span></p>
+		                </div>
+		            </a>
+		        </div>
+	     	{{/for}}
+		</script>
+
+    <div class="clear"></div>
+    <%@include file="/WEB-INF/content/public/bottom.jsp" %>
+    <%@include file="/WEB-INF/content/public/footer.jsp" %>
+</body>
+</html>

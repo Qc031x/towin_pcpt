@@ -1,0 +1,14 @@
+@charset "utf-8";
+/* CSS Document */
+.mask_layer{position:absolute;left:0;top:0;background:#000000;}
+.alert{position:absolute;text-align:center;border:1px #d3dbe7 solid;min-height:60px;_height:60px;margin-bottom:10px; min-width:200px;_width:200px; max-width:450px;*width:450px; clear:both; }
+.alert_ico01{background:url(../images/actionIcons_001.gif) 18px 35px no-repeat #FFF;}
+.alert_ico02{background:url(../images/actionIcons_002.gif) 18px 35px no-repeat #FFF;}
+.alert_ico03{background:url(../images/actionIcons_003.gif) 18px 35px no-repeat #FFF;}
+.alert_ico00{background:url(../images/actionIcons_000.gif) 18px 35px no-repeat #FFF;}
+.alert .tit {border-bottom:1px #d3dbe7 solid;background:#e8ecee;height:28px;line-height:28px;font-weight:bold;font-size:12px;color:#000;margin:0;padding:0 30px 0 10px; text-align:left; position:relative; cursor:default;white-space:nowrap; overflow:hidden;}
+
+.alert .key_body {margin:10px 20px 10px 66px; line-height:20px; text-align:left; word-wrap:break-word; }
+.alert input{margin:0 10px 10px 10px;}
+.alert input:focus { outline: none; } 
+.mask_layer .loading{width:100%;height:100%;background:url(../images/loading.gif) center center no-repeat;}

@@ -1,0 +1,42 @@
+package com.sgfm.datacenter.action.user;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.sgfm.base.action.BaseAction;
+import com.sgfm.datacenter.SysConstant;
+import com.sgfm.datacenter.exception.AppException;
+
+@Controller
+@Scope("prototype")
+public class UserAction extends BaseAction{
+
+	private static final long serialVersionUID = 1L;
+	
+	private Log logger = LogFactory.getLog(this.getClass());
+
+	/**
+	 * 跳转至个人中心
+	 * @return
+	 * @author JingZeKuan
+	 */
+	public String toPerCenPage() {
+		   try {
+			   	
+			   
+	        } catch (final AppException app) {
+	            this.logger.error(app);
+	        } catch (final Exception e) {
+	        	e.printStackTrace();
+	            this.logger.error(e);
+	        }		
+			super.getRequest().setAttribute("title", "个人中心");
+			return super.toContentView("user", "perCen");	
+		}
+}

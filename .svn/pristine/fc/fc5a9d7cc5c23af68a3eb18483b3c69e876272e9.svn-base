@@ -1,0 +1,340 @@
+package com.sgfm.datacenter.action.product;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.sgfm.base.action.BaseAction;
+import com.sgfm.datacenter.SysConstant;
+import com.sgfm.datacenter.entity.CgVariable;
+import com.sgfm.datacenter.exception.AppException;
+import com.sgfm.datacenter.memcached.CacheHashMap;
+import com.sgfm.datacenter.memcached.MemcachedConstant;
+import com.sgfm.datacenter.service.product.ProductService;
+import com.sgfm.datacenter.service.product.RlService;
+import com.sgfm.datacenter.util.JsonResponseResult;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+@Controller
+@Scope("prototype")
+public class ProductAction extends BaseAction{
+	private static final long serialVersionUID = 1L;
+	private Log logger = LogFactory.getLog(this.getClass());
+	
+	@Autowired
+	private ProductService productService;
+	@Autowired
+	private RlService rlService;
+	@Autowired
+	private CacheHashMap cacheMap;
+	
+	public CgVariable cgVariable = new CgVariable();
+	
+
+	
+	/**
+	 * 跳转至体检套餐列表页面
+	 * @return
+	 * @author JingZeKuan
+	 */
+	public String toProductListPage(){
+		try {
+           
+			String city = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString();
+			String cityName = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYNAME).toString();
+			
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("city", city);
+			map.put("categoryidOne", cgVariable.getCategoryidOne());
+			map.put("categoryidTwo", cgVariable.getCategoryidTwo());
+			// map.put("majorProject", cgVariable.getMajorProject());
+			map.put("brand_Id", cgVariable.getBrandId());
+			map.put("price", cgVariable.getPrice());
+			map.put("paixu", cgVariable.getPaixu() == null ? "" : cgVariable.getPaixu());
+			map.put("proSex", cgVariable.getProsex()==null?null:cgVariable.getProsex().replace("g", ""));
+			map.put("pageNo", super.getRequest().getParameter("page"));
+			Map<String, Object> infoMap = productService.findProductList(map);
+			List<HashMap<String, Object>> productList = (List<HashMap<String, Object>>) infoMap.get("productList");
+			
+			this.getRequest().setAttribute("productList", JSONArray.fromObject(productList).toString());
+			this.getRequest().setAttribute("pages", infoMap.get("totalPage"));
+			this.getRequest().setAttribute("totalCount", infoMap.get("totalCount"));
+			cgVariable.setCurrentPage(infoMap.get("currentPage").toString());
+			this.getRequest().setAttribute("cgVariable", cgVariable);
+        } catch (final AppException app) {
+            this.logger.error(app);
+        } catch (final Exception e) {
+            this.logger.error(e);
+        }
+        return super.toContentView("product", "productList");	
+	}
+	
+	 /**
+     * 套餐或体检卡列表页筛选条件数据
+     */
+	public String findConditionsDataList(){
+		JsonResponseResult result = null;
+		try {
+			String city = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString();
+			String condition=super.getRequest().getParameter("condition");
+			HashMap<String, Object> infoMap=new HashMap<String, Object>();
+			if(condition.indexOf("xzpp")>=0){
+				infoMap.put("brandList", cacheMap.getBrandByCity(MemcachedConstant.TW_BRAND_CITY+city));
+			}
+			if(condition.indexOf("tclx")>=0){
+				infoMap.put("productTypeList", cacheMap.getProductTypeList(MemcachedConstant.TW_PRODUCT_TYPE));
+			}
+			if(condition.indexOf("synl")>=0){
+				infoMap.put("productAgeList", cacheMap.getProductTypeList(MemcachedConstant.TW_PRODUCT_AGE));
+			}
+			if(condition.indexOf("xzqy")>=0){
+				infoMap.put("countryList", cacheMap.getAreaByCity(MemcachedConstant.TW_CITY_AREA+city));
+			}
+			if(condition.indexOf("yydj")>=0){
+				infoMap.put("brandTypeList", cacheMap.getBranchTypeList(MemcachedConstant.TW_BRANCH_TYPE));
+			}
+			
+			//infoMap.put("goodProduct", CommHashMap.getHashMapGoodProductList(MemcachedConstant.YY_GOODPRODUCT+city));
+			result = JsonResponseResult.createSuccess();
+			result.addData(infoMap);
+		} catch (final AppException app){
+			logger.error(app);
+			final String msg = getText(app.getMessage());
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		} catch (final Exception e){
+			e.printStackTrace();
+			logger.error(e);
+            final String msg = getText("操作失败！");
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		}
+		super.jsonResult = JSONObject.fromObject(result).toString();
+		return BaseAction.JSON;
+	}
+	
+	 /**
+	  * 体检套餐详情
+	  * @return
+	  */
+	public String toProductDetail(){
+		String address="";
+		try {
+            /* cxj 404跳转 */
+			cgVariable.setId(this.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString());
+			cgVariable.setPid(String.valueOf(cgVariable.getPid()));
+			boolean isPageExist = productService.findPageExist(cgVariable);
+			if (!isPageExist) {
+				return  super.toContentView("error", "lossProduct");
+			}
+            /* 商品未上架或当前城市不存在该商品跳转 */
+			cgVariable.setShaixuan("2");
+			List<HashMap<String, Object>> list = productService.findProductByCityAndPid(cgVariable);
+			if(list==null||list.size()==0) return super.toContentView("error", "lossProduct");
+            /* 用户所在坐标获取 */
+            if (null == super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG")) {
+                return super.toContentView("shop", "getPoint");
+            }
+			HashMap<String,Object> infoMap = new HashMap<String,Object>();
+			infoMap.put("pid", String.valueOf(cgVariable.getPid()));
+			infoMap.put("city", super.getFromSession(SysConstant.SYS_CITYID).toString());
+			HashMap<String,Object> map = productService.toProductDetail(infoMap);
+
+			String cityName = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYNAME).toString();
+
+            // 获取当前套餐的城市数量，判断跳转页面
+			List<HashMap<String, Object>> shopList=(List<HashMap<String, Object>>) map.get("shopList");
+
+			//address="productDetail";
+			if(shopList.size()>1){
+				address="productDetail";
+			}else{
+				address="productDetail_single";
+			}
+
+			super.getRequest().setAttribute("map", map);
+			super.getRequest().setAttribute("topTool", "2");
+			super.getRequest().setAttribute("isCard", super.getRequest().getParameter("isCard"));
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return super.toContentView("product", address);
+	}
+	 /**
+     * 根据esid，date获取预约日历
+     * 
+     * @return
+     */
+	public String getRiDataByEsid() {
+		JsonResponseResult responseResult = null;
+		boolean addFlag = false;
+		try {
+			String esid = super.getRequest().getParameter("esid");
+			String date = super.getRequest().getParameter("date");
+			Map<String, String[]> map = rlService.getRiDataByEsid(esid, date);
+			super.jsonResult = JSONArray.fromObject(map).toString();
+
+			responseResult = JsonResponseResult.createSuccess();
+			addFlag = true;
+		} catch (final AppException app) {
+			logger.error(app);
+			final String msg = getText(app.getMessage());
+			responseResult = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(responseResult).toString();
+		} catch (final Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+            final String msg = getText("操作失败,请联系管理员！");
+			responseResult = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(responseResult).toString();
+		}
+		responseResult.addData(addFlag);
+		return BaseAction.JSON;
+	}
+	
+	 /**
+     * 得到商品挂靠的所有门店
+     * 
+     * @return
+     */
+	public String findAllMedicalByPid() {
+		JsonResponseResult result = null;
+		try {
+
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("cityId", super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString());
+			map.put("cityName", super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYNAME).toString());
+			map.put("pid", String.valueOf(cgVariable.getPid()));
+			List<HashMap<String, Object>> medicals = productService.findAllMedicalByPid(map);
+			result = JsonResponseResult.createSuccess();
+			result.addData(medicals);
+
+		} catch (final AppException app) {
+			this.logger.error(app);
+			final String msg = this.getText(app.getMessage());
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		} catch (final Exception e) {
+			this.logger.error(e);
+			final String msg = this.getText("com.sgfm.datacenter.action.product.ProductAction.exception");
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		}
+		super.jsonResult = JSONObject.fromObject(result).toString();
+		this.logger.debug("action:" + this.jsonResult);
+		return BaseAction.JSON;
+	}
+	
+	
+	/**
+     * 找到单个城市该商品挂靠的门店
+     * 
+     * @return
+     */
+	public String findMedicalList() {
+		JsonResponseResult result = null;
+		try {
+
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("LOCATION_POINT_LNG", super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG"));
+            map.put("LOCATION_POINT_LAT", super.getRequest().getSession().getAttribute("LOCATION_POINT_LAT"));
+            map.put("cgVariable", cgVariable);
+            List<Map> medicals = productService.findMedicalList(map);
+			result = JsonResponseResult.createSuccess();
+			result.addData(medicals);
+
+		} catch (final AppException app) {
+			this.logger.error(app);
+			final String msg = this.getText(app.getMessage());
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		} catch (final Exception e) {
+			this.logger.error(e);
+			final String msg = this.getText("com.sgfm.datacenter.action.product.ProductAction.exception");
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		}
+		super.jsonResult = JSONObject.fromObject(result).toString();
+		this.logger.debug("action:" + this.jsonResult);
+		return BaseAction.JSON;
+	}
+	
+	
+	public String findShopsByPidAndCity() {
+		JsonResponseResult result = null;
+		try {
+            //String city = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString();
+
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("pid", super.getRequest().getParameter("pid"));
+            map.put("city", super.getRequest().getParameter("city"));
+			HashMap<String, Object> map2 = productService.findShopsByPidAndCity(map);
+
+			result = JsonResponseResult.createSuccess();
+			result.addData(map2);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+
+		} catch (final AppException app) {
+			this.logger.error(app);
+			final String msg = this.getText(app.getMessage());
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		} catch (final Exception e) {
+			this.logger.error(e);
+			final String msg = this.getText("com.sgfm.datacenter.action.order.OrderAction.exception");
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		}
+		return BaseAction.JSON;
+	}
+	
+	
+	public String ajaxProductLoadMore(){
+		JsonResponseResult result = null;
+		HashMap<String,Object> param = new HashMap<String,Object>();
+		try {
+			String city = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString();
+			String currentPage = cgVariable.getCurrentPage();
+            param.put("pageNum", currentPage);
+			param.put("city", city);
+            // 套餐类别
+			param.put("categoryidOne", cgVariable.getCategoryidOne());
+            // 适用年龄
+			param.put("categoryidTwo", cgVariable.getCategoryidTwo());
+            // 价格
+			param.put("price", cgVariable.getPrice());
+            // 品牌
+			param.put("brand_Id", cgVariable.getBrandId());
+			param.put("paixu", cgVariable.getPaixu());
+			param.put("proSex", cgVariable.getProsex()==null?null:cgVariable.getProsex().replace("g", ""));
+			param.put("pageNo", cgVariable.getCurrentPage());
+			Map<String, Object> infoMap = productService.findProductList(param);
+			List<HashMap<String, Object>> productList = (List<HashMap<String, Object>>) infoMap.get("productList");
+			//List<HashMap<String, Object>> productList = productService.findProductToLoadMore(param);
+			super.jsonResult = JSONArray.fromObject(productList).toString();
+		} catch (final AppException app){
+			logger.error(app);
+			final String msg = getText(app.getMessage());
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		} catch (final Exception e){
+			e.printStackTrace();
+			logger.error(e);
+            final String msg = getText("操作失败！");
+			result = JsonResponseResult.createFalied(msg);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+		}
+		return BaseAction.JSON;
+	}
+	
+}

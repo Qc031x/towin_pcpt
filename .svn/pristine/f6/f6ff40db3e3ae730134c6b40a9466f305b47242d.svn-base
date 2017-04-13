@@ -1,0 +1,119 @@
+package com.sgfm.datacenter.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+
+/**
+ * The persistent class for the S_ORDER_LINE database table.
+ * 
+ */
+@Entity
+@Table(name="S_ORDER_LINE")
+@NamedQuery(name="SOrderLine.findAll", query="SELECT s FROM SOrderLine s")
+public class SOrderLine implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private String olid;
+
+	@Column(name="CARD_NUMBER")
+	private String cardNumber;
+
+	@Column(name="IS_VALID")
+	private Integer isValid;
+
+	private String name;
+
+	private String oid;
+
+	private String password;
+
+	private String pid;
+
+	private String pimg;
+
+	@Column(name="SHOP_PRICE")
+	private Double shopPrice;
+
+	public SOrderLine() {
+	}
+
+	public String getOlid() {
+		return this.olid;
+	}
+
+	public void setOlid(String olid) {
+		this.olid = olid;
+	}
+
+	public String getCardNumber() {
+		return this.cardNumber;
+	}
+
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
+	}
+
+	public Integer getIsValid() {
+		return this.isValid;
+	}
+
+	public void setIsValid(Integer isValid) {
+		this.isValid = isValid;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getOid() {
+		return this.oid;
+	}
+
+	public void setOid(String oid) {
+		this.oid = oid;
+	}
+
+	public String getPassword() {
+		return this.password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getPid() {
+		return this.pid;
+	}
+
+	public void setPid(String pid) {
+		this.pid = pid;
+	}
+
+	public String getPimg() {
+		return this.pimg;
+	}
+
+	public void setPimg(String pimg) {
+		this.pimg = pimg;
+	}
+
+	public Double getShopPrice() {
+		return this.shopPrice;
+	}
+
+	public void setShopPrice(Double shopPrice) {
+		this.shopPrice = shopPrice;
+	}
+
+}

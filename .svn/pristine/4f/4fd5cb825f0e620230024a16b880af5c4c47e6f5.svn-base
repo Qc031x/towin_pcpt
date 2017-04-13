@@ -1,0 +1,80 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>会员中心</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<meta name = "format-detection" content = "telephone=no">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<link rel="stylesheet" type="text/css" href="/css/perCen.css">
+  </head>
+  <body style="background: #eeeff3;">
+    <div class="main">
+ 	<%@include file="../public/head.jsp" %>
+    <!-- 个人信息 -->   
+    <div class="perinfo">
+        <span>
+        	<img src="/images/default_img.png" />
+        </span>
+        <p>账号：${tMember.account}</p>
+    </div>
+    
+    <div class="clear"></div>
+    <!-- 快捷入口 -->
+    <ul class="shortcut ">
+        <li>
+            <a href="/core/user.findUserOrder.do?s=1">
+                <img src="/images/prepay.png"><span>待付款</span>
+                
+            </a>
+        </li>
+        <li>
+            <a href="/core/user.findUserCard.do?s=1">
+                <img src="/images/preord.png"><span>待预约</span>
+                
+            </a>
+        </li>
+        <li>
+            <a href="/core/user.findUserReservation.do?s=1">
+                <img src="/images/preche.png"><span>待体检</span>
+                
+            </a>
+        </li>
+    </ul>
+    
+    <div class="clear"></div>
+    <!-- 栏目标题 -->
+    <ul class="protip">
+        <li>
+            <a href="/core/user.findUserReservation.do" class="protip1"><span></span>我的预约(<em>${infoMap.reservationCount}</em>)</a>
+        </li>
+        <li>
+            <a href="/core/user.findUserCard.do" class="protip7"><span></span>我的卡密(<em>${infoMap.cardCount}</em>)</a>
+        </li>
+        <li>
+            <a href="/core/user.findUserOrder.do" class="protip2"><span></span>我的订单(<em>${infoMap.orderCount}</em>)</a>
+        </li>
+        <li>
+            <a href="/core/user.toCouponPage.do" class="protip3"><span></span>优惠券</a>
+        </li>
+    </ul>
+
+    <ul class="protip">
+        <li>
+            <a href="/core/user.toAccountSafe.do" class="protip4"><span></span>账号安全</a>
+        </li>
+        <li>
+            <a href="/core/user.toPerInfo.do" class="protip5"><span></span>个人资料</a>
+        </li>
+    </ul>
+</div>
+
+
+<!-- 底部 -->
+<div class="clear"></div>
+<%@include file="../public/footer.jsp" %>
+    
+  </body>
+</html>

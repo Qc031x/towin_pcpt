@@ -1,0 +1,24 @@
+.headtop1 {height: 45px; background: #fff;color: #fff; line-height: 45px; text-align: center;}
+.headtop1 .back {height: 45px;width: 50px;float: left; display: block;background: url(../images/riliqiean1.png) center center no-repeat;background-size: 0.5rem auto;}
+
+.login_con_box{margin: 1rem auto 0; overflow: hidden; font-size: 0.6rem; color: #afaeae;}
+.smalBox{width: 73.75%; overflow: hidden; margin: 0 auto;}
+.login_con_title{ line-height: 2.1rem; overflow: hidden; margin: 0 0 0.7rem 0; width: 73.75%; margin: 0 auto;}
+.login_l{ float: left; width: 50%; text-align: left; border-bottom: 2px solid #afaeae;  -webkit-tap-highlight-color:rgba(255,0,0,0); text-align: center;}
+.login_r{ float: left; width: 50%; text-align: right; border-bottom: 2px solid #afaeae;  -webkit-tap-highlight-color:rgba(255,0,0,0); text-align: center;}
+.active{ color: #1aa9b9; border-bottom: 2px solid #1aa9b9;}
+.login_con_input{ overflow: hidden;}
+.login_input{ width: 100%; height: 2rem; margin: 1rem 0 0; position: relative;}
+.login_input .login_acc{ border-radius: 0; -webkit-appearance: none; width: 82%; display: block; float: left; height: 1rem; border: 1px solid #dddddd; font-family: arial; color: #716f6f; font-size: 0.6rem; padding:0.4rem 15% 0.4rem 2%; box-sizing: content-box;}
+.login_input .delete{position: absolute; left: 85%;bottom: 0.5rem; background:url(../images/close.png) center center no-repeat; background-size:0.5rem auto; width: 10%;height: 1rem;display: inline-block;}
+.prompt{width: 73.75%; margin: 0 13.125%; line-height: 2.3rem; overflow: hidden;}
+.prompt a{ text-decoration: underline; color: #1aa9b9; display: block; float: left;}
+.prompt .prompt_r{ float: right;}
+.login_but{ width: 74%; font-size: 0.75rem; margin: 0 13.1%; line-height: 2.3rem; -webkit-appearance: none; border: none; height: 2.3rem; background: #e25d39; border-radius: 5px; color: #fff;}
+.login_input .login_acc1{ border-radius: 0; -webkit-appearance: none; height: 1rem;  width: 84%; border: 1px solid #dddddd; font-family: arial; color: #716f6f; font-size: 0.6rem; padding:0.4rem 13% 0.4rem 2%; display: block; float: left;  box-sizing: content-box;}
+.login_input .login_acc2{ border-radius: 0; -webkit-appearance: none; height: 1rem;  width: 57%; border: 1px solid #dddddd; font-family: arial; color: #716f6f; font-size: 0.6rem; padding:0.4rem 2% 0.4rem; border-width: 1px 0 1px 1px; display: block; float: left;  box-sizing: content-box;}
+.login_input .get_ver{ color: #fff; background: #1aa9b9; cursor: pointer; width: 38%; line-height: 1.88rem; height: 1.88rem; border: 1px solid #1aa9b9; text-align: center; float: left;}
+
+.wjmmdiv{line-height:2.5rem; font-size:0.6rem; color:#999; overflow: hidden;}
+.wjmmdiv .checkbox{-webkit-appearance: none; appearance: none; border: none; background:url(../images/fxanztbg3.png) no-repeat left 0.3rem;background-size: 0.75rem auto;height: 1.5rem;vertical-align: middle;width: 0.95rem;}
+.wjmmdiv .checkbox:checked {-webkit-appearance: none;background:url(../images/fxanztbg4.png) no-repeat left 0.3rem;background-size:0.75rem auto;height: 1.5rem;vertical-align: middle;width: 0.95rem;}

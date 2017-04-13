@@ -1,0 +1,5 @@
+package com.sgfm.datacenter.service.user;
+
+public interface UserService {
+
+}

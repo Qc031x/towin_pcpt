@@ -1,0 +1,47 @@
+@charset "utf-8";
+.pay_success {
+	clear: both;
+	padding: 1rem;
+	overflow: hidden;
+	margin: 2%;
+	background: #e8e8e8;
+	border-radius: 3px;
+	margin-top: 2rem;
+}
+
+.pay_success .success_tips {
+	padding: 0 0 0.625rem 1rem;
+	clear: both;
+	overflow: hidden;
+	font-size: 1.8rem;
+	border-bottom: 1px #fff solid;
+}
+
+.pay_success p {
+	clear: both;
+	overflow: hidden;
+	line-height: 2.3rem;
+	font-size: 1.4rem;
+	color: #999;
+}
+
+.pay_success span {
+	font-size: 1.4rem;
+	color: #716f6f;
+}
+
+.pay_success .jiaqian {
+	color: #ff6411;
+	font-family: arial;
+}
+.time-page ul li{
+	font-size:0.8rem;
+	margin:0.3rem 0 0.3rem 0.5rem;
+}
+.btn {
+	width: 100%;
+	max-width: 640px;
+	background: #027ac8;
+	color: #fff;
+	margin-top: 1rem;
+}

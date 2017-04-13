@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ReservationMap">
+	<!-- 查询我的预约 -->
+	<select id="findReservationByMid" resultClass="java.util.HashMap">
+		SELECT r.rid,r.pid,r.olid,r.mid,r.re_name,r.p_name,r.re_tel,
+	    r.post_date,r.creater_time,NVL(r.card,'--/--') as card,r.re_cid,r.r_type,r.status,
+	    e.ename,e.bname,f.pay_status
+	    FROM s_reservation r
+	    JOIN (SELECT a.esid,a.csid,a.name as ename,a.city,c.name bname FROM t_hospital_entity a 
+	    LEFT JOIN t_car_services b ON a.csid = b.csid
+	    LEFT JOIN  t_brand c  ON b.brand_id = c.id ) e ON r.esid=e.esid
+	    LEFT JOIN (SELECT  sol.olid,so.pay_status,so.is_valid FROM s_order_line  sol 
+	    LEFT JOIN s_order so ON sol.oid = so.oid) f ON r.olid = f.olid
+		LEFT JOIN t_member tm ON r.mid = tm.mid
+		WHERE 1=1 AND (r.mid=#mid# OR r.re_tel=#mobile#) AND (f.is_valid = 0 OR f.is_valid is null)
+	    ORDER BY post_date desc
+	</select>
+	
+	<!-- 查询预约单详情-->
+	<select id="findReservationInfo" resultClass="java.util.HashMap">
+		SELECT DISTINCT r.rid,r.pid,r.olid,r.mid,r.re_name,r.p_name,r.re_tel,r.re_sex,
+						r.post_date,r.creater_time,r.re_cid,r.r_type,r.status,NVL(r.card,'--/--') as card,
+						r.re_year,r.re_marriage,r.is_vip,r.doc_reports,r.paper_reports,
+						e.esid,e.ename,e.bname,e.city,e.title,e.address
+	    FROM s_reservation r
+		LEFT JOIN (select a.esid,a.csid,a.name as ename,a.city,a.address,c.name bname,d.title FROM t_hospital_entity a 
+		LEFT JOIN t_car_services b ON a.csid = b.csid
+		LEFT JOIN t_brand c  ON b.brand_id = c.id 
+		LEFT JOIN t_area d ON a.city = d.id) e ON r.esid=e.esid
+		WHERE r.rid = #rid#
+	</select>
+	
+	<select id="findVValidInfoByCardInfo" resultClass="java.util.HashMap">
+    select distinct '1' as jh,sol.is_valid,sp.status,sp.product_type,sol.pid,'1' as is_send,
+    (select count(esid) from t_hospital_entity where esid in (select esid from s_product_entity spe where pid = sol.pid) and is_cooperate =  1) count
+    from s_order_line sol 
+    left join s_product sp on sol.pid = sp.pid 
+    join s_product_entity spe on sol.pid = spe.pid 
+    where sol.card_number = #card#  and  sol.password = #password#
+	</select>
+	
+	<select id="checkMallCardIsReve" resultClass="java.util.HashMap">
+		SELECT rid FROM s_reservation WHERE status = 2  and card = #card#
+	</select>
+	
+	
+	
+	<update id="updateTReservation" parameterClass="reservation">
+		update s_reservation set
+		post_date=#postDate#,
+		re_name=#reName#,
+		re_cid=#reCid#,
+		re_sex=#reSex#,
+		re_tel=#reTel#,
+		re_marriage=#reMarriage#,
+		re_year=#reYear#,
+		esid=#esid#,
+		status=#status#,
+		creater_time=#createrTime#,
+		update_time=#postDate#
+		where rid = #rid#
+	</update>
+	
+	<insert id="insertTreservation" parameterClass="reservation">
+		INSERT INTO S_RESERVATION (
+			RID,
+			PID,
+			P_NAME,
+			OLID,
+			MID,
+			POST_DATE,
+			RE_NAME,
+			RE_CID,
+			RE_SEX,
+			RE_TEL,
+			RE_MARRIAGE,
+			RE_YEAR,
+			ESID,
+			IS_VIP,
+			PAPER_REPORTS,
+			R_TYPE,
+			STATUS,
+			CREATER_TIME,
+			DOC_REPORTS,
+			CARD,
+			PASSWORD
+		) VALUES (
+			SEQ_BASE.NEXTVAL,
+			#pid#,
+			#pName#,
+			#olid#,
+			#mid#,
+			(select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss') from dual),
+			#reName#,
+			#reCid#,
+			#reSex#,
+			#reTel#,
+			#reMarriage#,
+			#reYear#,
+			#esid#,
+			#isVip#,
+			#paperReports#,
+			#rType#,
+			#status#,
+			#createrTime#,
+			#docReports#,
+			#card#,
+			#password#
+		)
+	</insert>
+	
+	<update id="updateOrderItemStatus">
+		UPDATE
+		s_order_line pl SET pl.is_valid = 1 
+		WHERE pl.card_number = #card# and
+		pl.password = #password#
+	</update>
+	
+	<select id="findCardInfoByCard" parameterClass="reservation" resultClass="orderLine">
+	   select * from s_order_line where card_number = #card# and password = #password# 
+	</select>
+	
+</sqlMap>

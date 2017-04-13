@@ -1,0 +1,115 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="/WEB-INF/content/public/head.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <link rel="stylesheet" type="text/css" href="/css/cardInfo.css">
+    <title>卡密详情</title>
+</head>
+<body>
+<!--头部-->
+<div class="main">
+
+    <!--套餐介绍-->
+    <div class="tjchead">
+        <div class="imgbox">
+            <img src="${ctxPc}/card/${card.cardImg.BACKGROUND_FOLDER}/${card.cardImg.BACKGROUND_IMG}" alt="">
+            <span class="imgleft">${card.cardImg.LABLE_WORDS==null?'':card.cardImg.LABLE_WORDS}</span>
+            <span class="imgright">${card.SHOP_PRICE }元</span>
+            <div class="recommend">
+                <p class="rectitle">
+                	${card.NAME }
+                	<c:choose>
+                	<c:when test="${card.PRODUCT_ATTR eq 5 }">(男/女)</c:when>
+                	<c:when test="${card.PRODUCT_ATTR eq 6 }">(男)</c:when>
+                	<c:when test="${card.PRODUCT_ATTR eq 16 }">(女)</c:when>
+                	<c:when test="${card.PRODUCT_ATTR eq 18 }">(未婚女)</c:when>
+                	</c:choose>
+                </p>
+                <p class="paddleft">${fn:substring(card.cardImg.SUB_TITLE1,0,10)}</p>
+                <p class="paddleft">${fn:substring(card.cardImg.SUB TITLE2,0,10)}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info">
+        <p>卡&nbsp;&nbsp;&nbsp;&nbsp;号：<span>${card.CARD }</span></p>
+        <p>密&nbsp;&nbsp;&nbsp;&nbsp;码：<span>${card.PASSWORD }</span></p>
+        <p>编&nbsp;&nbsp;&nbsp;&nbsp;号：<span>${card.OID }</span></p>
+        <p>价&nbsp;&nbsp;&nbsp;&nbsp;格：<span class="ocol">¥ ${card.SHOP_PRICE }</span></p>
+        <p>有效期：<span>${card.LAST_DATE }</span></p>
+        <p>未使用</p>
+    </div>
+
+    <div class="buybox1">
+    	<c:choose>
+    		<c:when test="${card.IS_VALID == 0 }">
+		        <a href="javascript:;" class="buybtn now">立即预约</a>
+    		</c:when>
+    		<c:when test="${card.IS_VALID == 1 }">
+		        <a href="javascript:;" class="buybtn">审核中</a>
+    		</c:when>
+    		<c:when test="${card.IS_VALID == 2 }">
+		        <a href="javascript:;" class="buybtn">已完成</a>
+    		</c:when>
+    		<c:when test="${card.IS_VALID == -1 }">
+    			 <a href="javascript:;" class="buybtn">已失效</a>
+    		</c:when>
+    	</c:choose>
+    </div>
+    
+    <div class="alertBg"></div>
+    <div class="alertBox">
+        <img src="/images/alert.png">
+        <div class="alertCon">
+            <p>卡号：${card.CARD }</p>
+            <p>密码：${card.PASSWORD }</p>
+        </div>
+        <a id="confirm">确认使用</a>
+    </div>
+    
+</div>
+<script type="text/javascript">
+	$(".buybtn.now").click(function(){
+        $(".alertBg,.alertBox").show();
+        $(window).on("touchmove",function(e){e.preventDefault();});
+    });
+
+    $(".alertBg").click(function(){
+        $(".alertBg,.alertBox").hide();
+        $(window).off("touchmove");
+    })
+    
+    $("#confirm").click(function(){
+    	$(".alertBox").fadeOut();
+    	$.getMyJSON2(
+    	'${ctx}/core/reservation.doLoginRs.do ',{
+    		'tReservation.card':'${card.CARD}',
+    		'tReservation.password':'${card.PASSWORD}'
+    	},function(data){
+    		if (data.returncode == 0){
+    			postwith("${ctx}/core/reservation.submitOnlineTreservation.do",{
+    					"tReservation.card" : data.data[0], "tReservation.password" : data.data[1], 
+    					"tReservation.pid" : data.data[2], "TK" : data.data[3]
+    			});
+    		} else {
+    			alertMsg({"type" : "3", "content" : data.errmsg, "close" : true});
+    		}
+    	});
+    })
+function postwith(to,p){
+	 var myForm = document.createElement("form");myForm.method = "post";myForm.action = to;
+	for(var k in p) {
+		var myInput = document.createElement("input");myInput.setAttribute("name",k);myInput.setAttribute("value",p[k]);myForm.appendChild(myInput);
+	}
+	 document.body.appendChild(myForm);myForm.submit();
+	 document.body.removeChild(myForm);
+}  
+</script>
+</body>
+</html>

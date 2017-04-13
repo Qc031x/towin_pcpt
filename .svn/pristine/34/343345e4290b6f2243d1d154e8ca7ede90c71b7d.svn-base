@@ -1,0 +1,155 @@
+package com.sgfm.datacenter.entity;
+
+import java.math.BigDecimal;
+
+/**
+ * TMember entity. @author MyEclipse Persistence Tools
+ */
+
+public class TMember implements java.io.Serializable {
+
+	// Fields
+
+	private BigDecimal mid;
+	private String account;
+	private String password;
+	private String openid;
+	private String mobile;
+	private String idcard;
+	private BigDecimal MType;
+	private BigDecimal employeeId;
+	private String registerDate;
+	private String lastLogin;
+	private BigDecimal status;
+	private String name;
+
+	// Constructors
+
+	/** default constructor */
+	public TMember() {
+	}
+
+	/** minimal constructor */
+	public TMember(BigDecimal mid, BigDecimal status) {
+		this.mid = mid;
+		this.status = status;
+	}
+
+	/** full constructor */
+	public TMember(BigDecimal mid, String account, String password,
+			String openid, String mobile, String idcard, BigDecimal MType,
+			BigDecimal employeeId, String registerDate, String lastLogin,
+			BigDecimal status, String name) {
+		this.mid = mid;
+		this.account = account;
+		this.password = password;
+		this.openid = openid;
+		this.mobile = mobile;
+		this.idcard = idcard;
+		this.MType = MType;
+		this.employeeId = employeeId;
+		this.registerDate = registerDate;
+		this.lastLogin = lastLogin;
+		this.status = status;
+		this.name = name;
+	}
+
+	// Property accessors
+
+	public BigDecimal getMid() {
+		return this.mid;
+	}
+
+	public void setMid(BigDecimal mid) {
+		this.mid = mid;
+	}
+
+	public String getAccount() {
+		return this.account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getPassword() {
+		return this.password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getOpenid() {
+		return this.openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	public String getMobile() {
+		return this.mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getIdcard() {
+		return this.idcard;
+	}
+
+	public void setIdcard(String idcard) {
+		this.idcard = idcard;
+	}
+
+	public BigDecimal getMType() {
+		return this.MType;
+	}
+
+	public void setMType(BigDecimal MType) {
+		this.MType = MType;
+	}
+
+	public BigDecimal getEmployeeId() {
+		return this.employeeId;
+	}
+
+	public void setEmployeeId(BigDecimal employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public String getRegisterDate() {
+		return this.registerDate;
+	}
+
+	public void setRegisterDate(String registerDate) {
+		this.registerDate = registerDate;
+	}
+
+	public String getLastLogin() {
+		return this.lastLogin;
+	}
+
+	public void setLastLogin(String lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	public BigDecimal getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(BigDecimal status) {
+		this.status = status;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+}

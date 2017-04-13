@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="UserMap">
+
+	<resultMap id="T_member" class="member">
+		<result property="mid" column="mid" />
+		<result property="account" column="account" />
+		<result property="password" column="password" />
+		<result property="openid" column="openid" />
+		<result property="mobile" column="mobile" />		
+		<result property="idcard" column="idcard" />
+		<result property="MType" column="m_type" />
+		<result property="employeeId" column="employee_id" />
+		<result property="registerDate" column="register_date" />
+		<result property="lastLogin" column="last_login" />
+		<result property="status" column="status" />
+		<result property="name" column="name" />
+	</resultMap>
+	
+	<select id="findMemberByAccountOrMobile" resultClass="member" parameterClass="member">
+		SELECT * FROM T_MEMBER WHERE 1 = 1
+		<dynamic>
+			<isNotEmpty prepend="AND" property="account">
+				ACCOUNT = #account#
+				<isNotEmpty prepend="OR" property="mobile">
+					MOBILE = #mobile#
+				</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>  
+	</select>
+			
+	<select id="findMemberByOpenid" resultClass="member" parameterClass="member">
+		SELECT * FROM T_MEMBER WHERE 1 = 1
+		<dynamic>
+			<isNotEmpty prepend="AND" property="openid">
+				OPENID = #openid#
+			</isNotEmpty>
+		</dynamic>  
+	</select>
+	
+	<insert id="doRegisterNewMember">
+		INSERT INTO T_MEMBER (
+			MID,
+			ACCOUNT,
+			PASSWORD,
+			OPENID,
+			MOBILE,
+			M_TYPE,
+			REGISTER_DATE,
+			LAST_LOGIN
+		) VALUES (
+			SEQ_BASE.NEXTVAL,
+			#account#,
+			#password#,
+			#openid#,
+			#mobile#,
+			#MType#,
+			#registerDate#,
+			#lastLogin#
+		)
+	</insert>
+	
+	<update id="updMemberInfoByOpenid">
+		UPDATE T_MEMBER 
+		<dynamic prepend="SET">
+			<isNotEmpty property="account" prepend=",">
+				ACCOUNT = #account#
+			</isNotEmpty>
+			<isNotEmpty property="password" prepend=",">
+				PASSWORD = #password#
+			</isNotEmpty>
+			<isNotEmpty property="mobile" prepend=",">
+				MOBILE = #mobile#
+			</isNotEmpty>
+			<isNotEmpty property="idcard" prepend=",">
+				IDCARD = #idcard#
+			</isNotEmpty>
+			<isNotEmpty property="m_type" prepend=",">
+				M_TYPE = #m_type#
+			</isNotEmpty>
+			<isNotEmpty property="employee_id" prepend=",">
+				EMPLOYEE_ID = #employee_id#
+			</isNotEmpty>
+			<isNotEmpty property="last_login" prepend=",">
+				LAST_LOGIN = #last_login#
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend=",">
+				STATUS = #status#
+			</isNotEmpty>
+			<isNotEmpty property="true_name" prepend=",">
+				TRUE_NAME = #true_name#
+			</isNotEmpty>
+		</dynamic>
+		WHERE OPENID = #openid#
+	</update>
+
+     <!-- 根据地名查询t_area表数据 -->
+	<select id="findAreaById" resultClass="area">
+		select * from t_area where id = #id#
+	</select>
+
+     
+</sqlMap>

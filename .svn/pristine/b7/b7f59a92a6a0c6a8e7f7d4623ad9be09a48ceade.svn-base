@@ -1,0 +1,27 @@
+package com.sgfm.datacenter.dao.user;
+
+import org.springframework.stereotype.Repository;
+
+import com.sgfm.base.dao.BaseDao;
+import com.sgfm.datacenter.entity.TMember;
+
+@Repository
+public class UserDao extends BaseDao{
+      
+      
+	public TMember findMemberByAccountOrMobile(TMember tMember){
+		return (TMember) super.getSqlMapClientTemplate().queryForObject("UserMap.findMemberByAccountOrMobile", tMember);
+	}
+	
+	public TMember findMemberByOpenid(TMember tMember){
+		return (TMember) super.getSqlMapClientTemplate().queryForObject("UserMap.findMemberByOpenid", tMember);
+	}
+	
+	public void updMemberInfoByOpenid(TMember tMember){
+		super.getSqlMapClientTemplate().update("UserMap.updMemberInfoByOpenid", tMember);
+	}
+	
+	public void doRegisterNewMember(TMember tMember){
+		super.getSqlMapClientTemplate().insert("UserMap.doRegisterNewMember", tMember);
+	}
+}

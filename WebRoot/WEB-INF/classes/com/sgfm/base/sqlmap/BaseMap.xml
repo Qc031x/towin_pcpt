@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "E:\EclipseWorkSpace\SGFM\SqlMap2.dtd">
+<sqlMap namespace="BaseMap">
+
+    <!-- 全局 Map定义 -->
+    
+    <!-- 共享语句定义 -->
+    <!-- MySQL的分页查询 -->
+	<sql id="mysqlPageSqlSuffix">
+		 LIMIT #startRow# , #pageSize#
+	</sql>
+	<!-- 一般万级以下的Oracle分页查询（低耦合） -->
+	<sql id="oraPageSqlPrefix">
+		 SELECT * FROM (SELECT rownum midTab_id,a.* FROM (
+	</sql>
+	<sql id="oraPageSqlSuffix">
+	    <![CDATA[
+		 ) a) middleTable 
+		 WHERE middleTable.midTab_id > #startRow# 
+		 AND middleTable.midTab_id <= #startRow#+#pageSize#
+		]]>
+	</sql>
+	<!--海量数据的的Oracle分页查询，业务查询中要有row_number() over (ORDER BY 1 DESC) midTab_id 这个列(名字为midTab_id的列)-->
+	<sql id="oraPageSqlPrefix2">
+		 SELECT * FROM (
+	</sql>
+	<sql id="oraPageSqlSuffix2">
+	    <![CDATA[
+		 ) middleTable 
+		 WHERE middleTable.midTab_id > #startRow# 
+		 AND middleTable.midTab_id <= #endRow#
+		]]>
+	</sql>
+</sqlMap>
+

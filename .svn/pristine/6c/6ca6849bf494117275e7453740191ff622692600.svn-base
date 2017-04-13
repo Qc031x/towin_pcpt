@@ -1,0 +1,27 @@
+(function($) {
+	$(".buybtn1").on("click", function(){
+		var url = "/core/order.addRsToCookie.do",
+			data = {"pid" : $("#pid").val(), "quantity" : $(".goumaishu input").val()};
+		$.getMyJSON(url, data, function(data) {
+			if(data.returncode == 0){
+				window.location.href = "/core/order.toRsConfirm.do?TK="+data.data[0];
+			}else{
+				window.location.href = "/content/user.register.do?backurl="+encodeURIComponent(window.location.href);
+			}
+		});
+	});
+	$("#cardSubmit").sgfmform({
+		btnSubmit: "#cardSub",
+		ajaxurl : "/core/order.addCardToCookie.do",
+		tiptype : 1,
+		submittype : 2,
+		callback : function(data, url){
+			if(data.returncode == 0){
+				window.location.href = "/core/order.toCardConfirm.do?TK="+data.data[0];
+			}else{
+				window.location.href = "/content/user.register.do?backurl="+encodeURIComponent(window.location.href);
+			}
+		}
+	});
+})(jQuery)
+

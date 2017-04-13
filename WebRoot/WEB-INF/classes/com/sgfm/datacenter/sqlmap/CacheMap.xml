@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="CacheMap">
+
+	<!-- 获取商品类型(年龄和类型) -->
+	<select id="findProductTypeList" resultClass="java.util.HashMap">
+		SELECT name,key,category_id FROM s_productType ORDER BY sort ASC
+	</select>
+	
+	<!-- 获取分院类型 -->
+	<select id="findBranchTypeList" resultClass="java.util.HashMap">
+		SELECT name,key from s_hospitaltype ORDER BY sort ASC
+	</select>
+
+	<!-- 获取有分院的城市下的区域  -->
+	<select id="findValidArea" resultClass="java.util.HashMap">
+		SELECT DISTINCT id AS countryid,title AS country,parentid AS cityid FROM t_area ta
+		INNER JOIN t_hospital_entity th ON th.area = ta.id
+    	WHERE th.city IS NOT NULL  AND th.is_cooperate=1
+	</select>
+	
+	<!-- 获取有分院的城市  -->
+	<select id="findValidCity" resultClass="java.util.HashMap">
+		SELECT id,SUBSTR(title, 0, length(title)-1 ) AS title,area_code,city_code,parentid FROM t_area 
+		WHERE id IN (SELECT city FROM t_hospital_entity WHERE is_cooperate=1) ORDER BY title ASC
+	</select>
+	
+	<!-- 获取有分院的城市下的品牌 -->
+	<select id="findBrandByCity" resultClass="java.util.HashMap">
+		SELECT DISTINCT tb.id AS brandId, tb.name AS brandName, th.city FROM t_brand tb
+		INNER JOIN t_car_services tcs ON tcs.brand_id = tb.id
+		INNER JOIN t_hospital_entity th ON th.csid = tcs.csid
+	</select>
+	
+	<!-- 获取已审核并上架的商品信息 -->
+	<select id="findValidProduct" resultClass="java.util.HashMap">
+		SELECT p.pid,p.pno,p.name AS pname,p.sex,
+	    product_brief,p.vip,p.doc_report,
+	    p.product_desc,
+	    NVL(p.img,'morenProduct.jpg') AS img,p.product_type,p.pay_type,
+	    NVL(p.shop_price,0) AS shop_price,
+	    NVL(p.market_price,0) AS market_price,
+	    NVL(TO_CHAR(p.discount * 10, '99.9'),0) AS discount,
+	    DECODE(p.product_type,0,0,tcs.csid) as csid,
+	    DECODE(p.product_type,0,0,tb.id) as brandId,
+	    DECODE(p.product_type,0,p.brand_name,tb.name) as bname
+	    FROM s_product p
+	    LEFT JOIN (select distinct pid,csid from s_product_entity) spe ON spe.pid = p.pid
+	    LEFT JOIN t_car_services tcs ON tcs.csid = spe.csid
+	    LEFT JOIN t_brand tb ON tb.id = tcs.brand_id
+		WHERE p.status = 2 
+	</select>
+	
+	<!-- 获取每个商品的类型 -->
+	<select id="findTypeByProduct" resultClass="java.util.HashMap">
+		SELECT spt.pid, sp.name, sp.key, sp.category_id FROM s_product_type spt
+		INNER JOIN s_productType sp ON sp.key = spt.key
+	</select>
+	
+	<!-- 商品的体检卡图片信息 -->
+	<select id="findCardImgByProduct" resultClass="java.util.HashMap">
+		SELECT pid,label,main_title,sub_title1,sub_title2,car_img FROM s_product_cardimg
+	</select>
+	
+	<!-- 商品的体检项目信息 -->
+	<select id="findSetmealByProduct" resultClass="java.util.HashMap">
+		SELECT pt.pid, sl.model_name, sl.context, sl.sex, sty.type_name  
+		FROM s_product_setmeal pt, t_setmealinfo sl, t_setmealtype sty 
+		WHERE sty.id = sl.type_id AND sl.id = pt.meal_id
+		ORDER BY sty.sort ASC ,sl.sort ASC
+	</select>
+	
+	<!-- 获取已审核并合作的分院信息 -->
+	<select id="findValidBranch" resultClass="java.util.HashMap">
+		SELECT b.esid, b.csid, b.name AS ename, b.address, b.bus_line,sh.name AS typeName,
+	    b.checkup_time, b.rest_time, b.province, b.city, b.area, c.name AS bname,
+	    TO_CHAR(b.description) AS description, nvl(b.tel,'400-661-6669') AS tel, b.lgt, b.lat,
+	    (SELECT title FROM t_area WHERE id = b.province ) AS provinceName,
+	    (SELECT title FROM t_area WHERE id = b.city ) AS cityName,
+	    (SELECT title FROM t_area WHERE id = b.area ) AS countyName,
+	    (SELECT img_url FROM t_entity_picture WHERE esid = b.esid AND model_flag = 0 AND ROWNUM = 1) AS img
+	    FROM t_hospital_entity b 
+	    LEFT JOIN (SELECT csid,brand_id,key FROM t_car_services) cs ON b.csid = cs.csid 
+	    LEFT JOIN (SELECT id,name FROM t_brand) c ON cs.brand_id = c.id
+	    LEFT JOIN s_hospitaltype sh ON sh.key = cs.key
+	    WHERE b.is_cooperate = 1
+	</select>
+	
+	<!-- 获取分院的环境图片信息 -->
+	<select id="findEnvironmentImgByBranch" resultClass="java.util.HashMap">
+		SELECT esid,img_url AS environmentImg FROM t_entity_picture WHERE model_flag = 1
+	</select>
+	
+	<!-- 获取有分院的城市下的区域 单个城市下的区域  -->
+	<select id="findValidAreaByEsid" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT id AS countryid,title AS country,parentid AS cityid FROM t_area ta
+		INNER JOIN (SELECT DISTINCT area, city FROM t_hospital_entity WHERE city = #city# AND is_cooperate=1) th 
+		ON th.area = ta.id
+	</select>
+	
+	<!-- 获取有分院的城市下的品牌  单个城市下的品牌 -->
+	<select id="findBrandByCityId" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT DISTINCT tb.id AS brandId, tb.name AS brandName, th.city FROM t_brand tb
+		INNER JOIN t_car_services tcs ON tcs.brand_id = tb.id
+		INNER JOIN (select csid,city from t_hospital_entity where city = #city#) th ON th.csid = tcs.csid
+	</select>
+	
+	<!-- 获取已审核并上架的商品信息 单个商品信息 -->
+	<select id="findValidProductByPid" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT p.pid,p.pno,p.name AS pname,p.sex,
+	    product_brief,p.vip,p.doc_report,
+	    p.product_desc,
+	    NVL(p.img,'morenProduct.jpg') AS img,p.product_type,p.pay_type,
+	    NVL(p.shop_price,0) AS shop_price,
+	    NVL(p.market_price,0) AS market_price,
+	    NVL(TO_CHAR(p.discount * 10, '99.9'),0) AS discount,
+	    DECODE(p.product_type,0,0,tcs.csid) as csid,
+	    DECODE(p.product_type,0,0,tb.id) as brandId,
+	    DECODE(p.product_type,0,p.brand_name,tb.name) as bname
+	    FROM s_product p
+	    LEFT JOIN (select distinct pid,csid from s_product_entity) spe ON spe.pid = p.pid
+	    LEFT JOIN t_car_services tcs ON tcs.csid = spe.csid
+	    LEFT JOIN t_brand tb ON tb.id = tcs.brand_id
+		WHERE p.status = 2 AND p.pid = #pid# AND ROWNUM = 1
+	</select>
+	
+	<!-- 获取单个商品的类型 -->
+	<select id="findTypeByPId" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT spt.pid, sp.name, sp.key, sp.category_id FROM s_product_type spt
+		INNER JOIN s_productType sp ON sp.key = spt.key WHERE spt.pid = #pid#
+	</select>
+	
+	<!-- 获取单个商品的体检卡图片信息 -->
+	<select id="findCardImgByPId" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT pid,label,main_title,sub_title1,sub_title2,car_img FROM s_product_cardimg WHERE pid = #pid# AND ROWNUM = 1
+	</select>
+	
+	<!-- 获取单个商品的体检项目信息 -->
+	<select id="findSetmealByPId" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT pt.pid, sl.model_name, sl.context, sl.sex, sty.type_name  
+		FROM s_product_setmeal pt, t_setmealinfo sl, t_setmealtype sty 
+		WHERE sty.id = sl.type_id AND sl.id = pt.meal_id AND pt.pid = #pid#
+		ORDER BY sty.sort ASC ,sl.sort ASC
+	</select>
+	
+	<!-- 获取已审核并合作的分院信息 单个分院 -->
+	<select id="findValidBranchByEsid" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT b.esid, b.csid, b.name AS ename, b.address, b.bus_line,sh.name AS typeName,
+	    b.checkup_time, b.rest_time, b.province, b.city, b.area, c.name AS bname,
+	    TO_CHAR(b.description) AS description, nvl(b.tel,'400-661-6669') AS tel, b.lgt, b.lat,
+	    (SELECT title FROM t_area WHERE id = b.province ) AS provinceName,
+	    (SELECT title FROM t_area WHERE id = b.city ) AS cityName,
+	    (SELECT title FROM t_area WHERE id = b.area ) AS countyName,
+	    (SELECT img_url FROM t_entity_picture WHERE esid = b.esid AND model_flag = 0 AND ROWNUM = 1) AS img
+	    FROM t_hospital_entity b 
+	    LEFT JOIN (SELECT csid,brand_id,key FROM t_car_services) cs ON b.csid = cs.csid 
+	    LEFT JOIN (SELECT id,name FROM t_brand) c ON cs.brand_id = c.id
+	    LEFT JOIN s_hospitaltype sh ON sh.key = cs.key
+	    WHERE b.is_cooperate = 1 AND b.esid = #esid#
+	</select>
+	
+	<!-- 获取单个分院的环境图片信息  -->
+	<select id="findEnvironmentImgByEsid" resultClass="java.util.HashMap" parameterClass="java.lang.String">
+		SELECT esid,img_url AS environmentImg FROM t_entity_picture WHERE model_flag = 1 AND esid = #esid#
+	</select>
+	
+	<!-- 获取每个商品的所属分院 -->
+	<select id="findBranchByProduct" resultClass="java.util.HashMap">
+		SELECT pid, esid FROM s_product_entity
+	</select>
+	
+	<!-- 获取每个商品的所属分院  单个商品 -->
+	<select id="findBranchByPid" resultClass="java.lang.String" parameterClass="java.lang.String">
+		SELECT esid FROM s_product_entity WHERE pid = #pid#
+	</select>
+	
+</sqlMap>

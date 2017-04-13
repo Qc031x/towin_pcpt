@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ShopMap">
+
+    <select id="findAllCountry" resultClass="java.util.HashMap">
+		select distinct id as countryid,title as country,parentid as cityid from t_area ta
+		inner join t_hospital_entity the on the.area  = ta.id
+		where the.city is not null and the.is_cooperate = 1
+	</select>
+    
+    <select id="findAllCountryByCity" resultClass="java.util.HashMap">
+		select distinct id as countryid,title as country,parentid as cityid from t_area ta
+		inner join t_hospital_entity the on the.area  = ta.id
+		where the.city is not null and the.is_cooperate = 1 and parentid = #city#
+	</select>
+    
+    
+    <select id="findAllHospitalType" resultClass="java.util.HashMap">
+		select * from s_hospitaltype order by sort
+	</select>
+    
+    
+    <!-- 根据所在地获取坐标地址为空的体检机构信息 -->
+	<select id="findAllEmpPoint" resultClass="java.lang.String">
+		SELECT
+			esid
+		FROM
+			t_hospital_entity
+		WHERE
+			city = #city#
+		AND is_cooperate = 1
+		AND (
+			LAT IS NULL OR LGT IS NULL
+		)
+	</select>
+    
+    
+    <sql id="findMedicalinstCons">
+		<dynamic>
+			<isNotEmpty prepend=" AND " property="county">
+				b.area = #county#
+			</isNotEmpty>
+			<isNotEmpty prepend=" AND " property="categoryid">
+				sh.key = #categoryid#
+			</isNotEmpty>
+			<isNotEmpty prepend=" AND " property="brandId">
+				tcs.brand_id = #brandId#
+			</isNotEmpty>
+			group by b.esid,b.LAT,b.LGT,minprice
+		</dynamic>
+		<dynamic prepend=" order by ">
+			<isEqual prepend=", " property="distance" compareValue="0">
+				distance desc
+			</isEqual>
+			<isEqual prepend=", " property="distance" compareValue="1">
+				distance asc
+			</isEqual>
+			<isEmpty prepend=", " property="paixu">
+				counts desc
+			</isEmpty>
+			<isNotEmpty prepend=", " property="paixu">
+				<isEqual property="paixu" compareValue="countssdesc">
+					counts desc
+				</isEqual>
+				<isEqual property="paixu" compareValue="countssasc">
+					counts asc
+				</isEqual>
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+		<!-- <isEqual property="paixu" compareValue="commentdesc">
+					comments desc
+				</isEqual>
+				<isEqual property="paixu" compareValue="commentasc">
+					comments asc
+				</isEqual> -->
+    
+    <!-- 查询 总数 -->
+	<select id="countEntityShopList" resultClass="java.lang.Integer" parameterClass="java.util.HashMap">
+    select count(1) from t_hospital_entity the  
+    inner join t_car_services tcs on the.csid = tcs.csid
+    left join s_hospitaltype sh on tcs.key = sh.key
+    WHERE the.city  =#city# and the.is_cooperate = 1 and tcs.is_cooperate = 1
+	<dynamic>
+		<isNotEmpty prepend=" AND " property="county">
+			the.area = #county#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="categoryid">
+			sh.key = #categoryid#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="brandId">
+			tcs.brand_id = #brandId#
+	    </isNotEmpty>
+	</dynamic>
+	</select>
+	
+	
+	<!-- 根据所在地获取体检 机构信息 -->
+	<select id="findEntityShopList" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		<include refid="BaseMap.oraPageSqlPrefix2" />
+		SELECT
+			tempTable.*, ROW_NUMBER () OVER (ORDER BY 1 DESC) midTab_id
+		FROM
+			(
+				SELECT
+					b.esid,
+					NVL (c.minprice,0) AS minprice,
+					NVL ((SELECT count(1) FROM s_reservation WHERE esid = b.esid),0) AS counts,
+					GetDistance(b.LAT, b.LGT, #locationPoint_lat#, #locationPoint_lng#) as distance
+				FROM
+					t_hospital_entity b
+				INNER JOIN t_car_services tcs ON tcs.csid = b.csid
+				LEFT JOIN s_hospitaltype sh on tcs.key = sh.key
+				LEFT JOIN (SELECT spe.esid,MIN(sp.shop_price) as MINPRICE FROM s_product_entity spe 
+				INNER JOIN s_product sp ON spe.pid = sp.pid WHERE sp.status = 2 AND sp.pscope IN (1,3) GROUP BY spe.esid) c ON b.esid = c.esid
+				WHERE b.city = #city# and b.is_cooperate = 1 and tcs.is_cooperate = 1
+		<include refid="findMedicalinstCons" />
+			) tempTable
+		<include refid="BaseMap.oraPageSqlSuffix2" />
+	</select>
+	
+	
+	<!-- 查询单个分院基础信息 -->
+	<select id="findShopInfoByEsid" resultClass="java.util.HashMap">
+		select b.esid,b.csid,b.province,b.city,b.area,b.name as ename,b.address,c.name bname,
+		(select title from t_area where id = b.province ) as provinceName,
+	    (select title from t_area where id = b.city ) as cityName,
+	    (select title from t_area where id = b.area ) as countyName,
+	    nvl((SELECT te.img_url FROM t_entity_picture te WHERE te.model_flag = 0 and te.esid = b.esid),'morenStore.jpg') as img_url,
+	    b.LAT,
+		b.LGT
+        from t_hospital_entity b
+        inner join (select csid,brand_id from t_car_services) cs on b.csid = cs.csid
+        inner join (select id,name from t_brand) c on cs.brand_id = c.id   
+        where b.esid = #esid#
+	</select>
+	
+	<select id="findHospitalTypeByEsid" resultClass="java.util.HashMap">
+		select  sh.name,sht.esid  
+		from s_hospitaltype sh,s_hospital_type sht 
+		where sh.key = sht.key and sht.esid = #esid#
+	</select>
+	
+	
+	<update id="updShopPoint" parameterClass="java.util.HashMap">
+		update t_hospital_entity set LAT = #LAT#, LGT = #LNG# where ESID = #ESID#
+	</update>
+    
+    <select id="findProductTypeByEsid" resultClass="java.util.HashMap">
+    	SELECT DISTINCT sp.key, sp.name FROM s_product_type spt
+		INNER JOIN s_producttype sp ON spt.key = sp.key
+		WHERE spt.pid IN 
+		(SELECT spe.pid FROM s_product_entity spe INNER JOIN s_product sp ON sp.pid = spe.pid WHERE esid = #esid# AND sp.status = 2 AND sp.pscope IN (1,3))
+		AND sp.category_id = 2
+    </select>
+    
+    <select id="countMECProductByCondition" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+    	SELECT COUNT(1) FROM s_product sp
+		INNER JOIN (SELECT pid FROM s_product_entity WHERE esid = #esid# ) spe ON spe.pid = sp.pid
+		WHERE sp.status = 2 AND sp.pscope IN (1,3)
+		<dynamic>
+			<isNotEmpty prepend=" AND " property="key">
+				sp.pid IN (SELECT pid FROM s_product_type WHERE key = #key#)
+			</isNotEmpty>
+		</dynamic>
+    </select>
+    
+    <select id="findMECProductListByCondition" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    	<include refid="BaseMap.oraPageSqlPrefix"/>
+    	SELECT sp.pid, 99 AS count FROM s_product sp
+		INNER JOIN (SELECT pid FROM s_product_entity WHERE esid = #esid# ) spe ON spe.pid = sp.pid
+		WHERE sp.status = 2 AND sp.pscope IN (1,3)
+		<dynamic>
+			<isNotEmpty prepend=" AND " property="key">
+				sp.pid IN (SELECT pid FROM s_product_type WHERE key = #key#)
+			</isNotEmpty>
+		</dynamic>
+		<include refid="BaseMap.oraPageSqlSuffix"/>
+    </select>
+    
+</sqlMap>

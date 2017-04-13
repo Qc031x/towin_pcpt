@@ -1,0 +1,31 @@
+/**/
+.orderInfo{overflow: hidden; border-bottom: 0.4rem solid #eeeff3;}
+.orderInfo .orderTop{font-size: 0.6rem; color: #999; height: 1.55rem; line-height: 1.55rem; padding: 0 0.5rem;}
+
+.orderCon{height: 3.425rem; padding:  0 0.5rem; background: #f6f6f6;}
+.newBg{background: #fff; border-top: 1px solid #e8e8e8;}
+.orderCon a{display: block;overflow: hidden;padding: 0.5rem 0;}
+.orderCon a img{float: left;width: 3.6rem; height: 2.425rem;}
+.orderCon a .proinfo{margin-left: 4.25rem;}
+.orderCon a .proinfo p{margin: 0;padding: 0; font-size:0.6rem; color: #4b4643;}
+.orderCon a .proinfo p:first-child{margin: -0.07rem 0 0; height: 0.9rem; overflow: hidden;}
+.orderCon a .proinfo p b{ color: #e25d39; font-size:0.6rem;}
+.orderCon a .proinfo p em{ color: #999999; margin-left: 0.25rem; font-style: normal; text-decoration: line-through; }
+.orderCon a .proinfo .sold{ color: #999; font-size:0.6rem; line-height: 0.8rem; height: 0.8rem;}
+.orderCon a .proinfo p span{display: block; float: left;}
+.orderCon a .proinfo p span:last-child{float: right; color: #e25d39; text-decoration: underline;}
+.orderCon a .proinfo p span.newDec{text-decoration: none;}
+
+
+/**/
+.protip{ line-height: 2.0rem; background-color: #fff; font-size: 0.65rem; font-weight: bold; color: #716f6f; border-bottom: #e8e8e8 1px solid;}
+.peobox{ background-color: #fff; font-size: 12px; color: #716f6f; line-height: 20px; margin: 0 0.5rem;}
+.peobox p{ margin: 0; line-height: 2.0rem; height: 2.0rem; border-bottom: #e8e8e8 1px solid; font-size: 0.65rem; color: #929191;}
+.peobox p:last-child{border-bottom: none;}
+.peobox p span{display: block; float: left;}
+.peobox p span:last-child{color: #6e6e6f; float: right;}
+.peobox p span.blue{color: #1aa9b9;}
+.peobox p span.red{color: #e25d39;}
+
+
+

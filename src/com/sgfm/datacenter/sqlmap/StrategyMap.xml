@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="StrategyMap">
+
+
+	
+	<!--<resultMap class="product" id="T_product">
+		<result property="pid" column="pid" />
+		<result property="cid" column="cid" nullValue="0"/>
+		<result property="name" column="name" nullValue="0"/>
+		<result property="detailDesc" column="detail_desc" nullValue="0"/>
+		<result property="alive" column="alive" nullValue="0"/>
+		<result property="imgB" column="img_b" nullValue="0"/>
+		<result property="marketPrice" column="market_price" nullValue="0"/>
+		<result property="shopPrice" column="shop_price" nullValue="0"/>
+		<result property="postDate" column="post_date" nullValue="0"/>
+		<result property="PNo" column="p_no" nullValue="0"/>
+		<result property="searchTitle" column="search_title" nullValue="0"/>
+		<result property="searchKeywords" column="search_keywords" nullValue="0"/>
+		<result property="searchDescription" column="search_description" nullValue="0"/>
+		<result property="invoice" column="invoice" nullValue="0"/>
+		<result property="productDesc" column="product_desc" nullValue="0"/>
+	</resultMap>
+	
+
+-->
+ <select id="getAutoStgByEsidAndDate" resultClass="autoStrategy" >
+   select * from s_auto_strategy t3  where t3.esid=#esid#
+</select>
+<select id="getAutoStgByEsidAndDate2" resultClass="java.util.HashMap" >
+   select * from s_auto_strategy t3  where t3.esid=#esid#
+</select>
+
+ <select id="getReservationByEcd" resultClass="java.util.HashMap" parameterClass="java.util.HashMap" >
+  select count(s.esid) as count ,s.creater_time from s_reservation s   
+    where s.status != 3 and  s.esid=#esid# and substr(s.creater_time,1,7)= #creater_time#
+		 group by  s.creater_time   having count(s.esid)>=#count#
+</select>
+
+ <select id="getPlayStgByEsid" resultClass="playdayStrategy" >
+   select * from s_playday_strategy s  where s.esid=#esid#
+</select>
+ <select id="getHolidStgByEsid" resultClass="holidayStrategy" parameterClass="java.util.HashMap" >
+  select * from s_holiday_strategy s   where s.esid=#esid# and  substr(startdate,1,7)=  #startdate#
+  </select>
+
+ <select id="getSignStgByEsid" resultClass="signdayStrategy" parameterClass="java.util.HashMap" >
+ select * from s_signday_strategy s   where s.esid=#esid# and  substr(day,1,7)=#date#
+  </select>
+
+ <select id="getRevCountByEsid" resultClass="java.lang.Integer" parameterClass="java.util.HashMap" >
+select count (1) as count from s_reservation s   where s.status = 1 and  s.esid=#esid#  and substr(s.creater_time,1,10)=#date#
+  </select>
+  
+	<update id="updateSingleDateCount" parameterClass="java.util.HashMap">
+	  	update s_signday_strategy set person_count = person_count - #count# where esid = #esid# and day = #day#
+	</update>
+	
+	<select id="findSingleDateCount" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+	  	select person_count from s_signday_strategy where esid = #esid# and day = #day#
+	</select>
+
+ 
+</sqlMap>
+

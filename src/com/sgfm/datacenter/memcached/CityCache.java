@@ -1,0 +1,230 @@
+package com.sgfm.datacenter.memcached;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.danga.MemCached.MemCachedClient;
+import com.sgfm.datacenter.service.cache.CacheService;
+import com.sgfm.datacenter.util.CommUtil;
+
+/**
+ * 有分院的城市下的区域缓存
+ * 有商品的城市下的品牌缓存
+ * @author kangliangyu
+ *
+ */
+@SuppressWarnings("unchecked")
+@Component
+public class CityCache {
+	
+	private static Logger logger = Logger.getLogger(CityCache.class.getName());
+	
+	@Autowired
+	private MemCachedClient  mcc;
+	
+	@Autowired
+	private CacheService cacheService;
+	
+	public void cityCacheInitialization(){
+		logger.info("城市的区域和品牌缓存beg");
+		
+		List<HashMap<String,Object>> cityList;	//有分院的城市集合
+		
+		//缓存有分院的城市
+		cityList = this.cacheValidCity();
+		
+		//缓存有分院的城市下的区域
+		this.cacheAreaByCity();
+		
+		if(cityList != null && !cityList.isEmpty()){
+			//品牌缓存  按城市分类
+			this.cacheBrandByCity(cityList);
+		}
+		
+		logger.info("城市的区域和品牌缓存end");
+	}
+	
+	/**
+	 * 缓存有分院的城市
+	 */
+	public List<HashMap<String,Object>> cacheValidCity(){
+		logger.info("有分院的城市缓存加载beg");
+		
+		List<HashMap<String,Object>> cityList = cacheService.findValidCity();
+		
+		if(cityList == null || cityList.isEmpty()){
+			logger.info("有分院的城市没有数据");
+			return null;
+		}
+		
+		MemcachedUtil memcachedUtil = MemcachedUtil.getInstance();
+		String cityName, areaCode;
+		for(int i = 0; i < cityList.size(); i++){
+			
+			cityName = memcachedUtil.getString(cityList.get(i).get("TITLE"));
+			if("".equals(cityName)){
+				cityList.get(i).put("pinyin", "");
+				continue;
+			}
+			
+			areaCode = memcachedUtil.getString(cityList.get(i).get("AREA_CODE"));
+			if("".equals(areaCode)){
+				cityList.get(i).put("pinyin", CommUtil.converterToFirstSpell(cityName).toLowerCase());
+				continue;
+			}
+			
+			cityList.get(i).put("pinyin", areaCode.substring(0,1).toLowerCase());
+		}
+		
+		mcc.set(MemcachedConstant.TW_VALIDCITY, cityList);
+		
+		logger.info("有分院的城市缓存加载end");
+		
+		return cityList;
+	}
+	
+	/**
+	 * 缓存有分院的城市下的区域
+	 */
+	public void cacheAreaByCity(){
+		
+		logger.info("有分院的城市下的区域缓存加载beg");
+		
+		List<HashMap<String,Object>> areaList = cacheService.findValidArea();
+		
+		if(areaList == null || areaList.isEmpty()){
+			logger.info("有分院的城市下的区域没有数据");
+			return;
+		}
+		
+		MemcachedUtil memcachedUtil = MemcachedUtil.getInstance();
+		
+		List<HashMap<String,Object>> list;
+		HashMap<String,Object> map = new HashMap<String, Object>();
+		String cityId;
+		int size = areaList.size();
+		for(int i = 0;i < size;i++){
+			
+			cityId = memcachedUtil.getString(areaList.get(i).get("CITYID"));
+			
+			if("".equals(cityId))continue;
+			
+			list = new ArrayList<>();
+			
+			//判断map是否已经存在这个cityId的属性，如果存在则合并
+			if(map.containsKey(cityId)){
+				list = (List<HashMap<String, Object>>) map.get(cityId);
+			}
+			
+			list.add(areaList.get(i));
+			map.put(cityId,list);
+			
+		}
+		
+		for (Entry<String, Object> entry : map.entrySet()) {       
+		    mcc.set(MemcachedConstant.TW_CITY_AREA+entry.getKey(), entry.getValue());
+		} 
+		
+		logger.info("有分院的城市下的区域缓存加载end");
+		
+		/*for (Entry<String, Object> entry : map.entrySet()) {   
+			System.err.println(entry.getKey()+":"+mcc.get(MemcachedConstant.TW_CITY_AREA+entry.getKey()));
+		}*/ 
+	}
+	
+	/**
+	 * 品牌缓存  按城市分类
+	 */
+	public void cacheBrandByCity(List<HashMap<String,Object>> cityList){
+		
+		logger.info("品牌缓存加载beg");
+		
+		List<HashMap<String,Object>> brandList = cacheService.findBrandByCity(); 
+		
+		if(brandList == null || brandList.isEmpty()){
+			logger.info("品牌没有数据");
+			return;
+		}
+		
+		MemcachedUtil memcachedUtil = MemcachedUtil.getInstance();
+		
+		List<HashMap<String,Object>> list;
+		
+		String cityId;
+		int size = cityList.size();
+		for(int i = 0;i < size;i++){
+			cityId = memcachedUtil.getString(cityList.get(i).get("ID"));
+			
+			if("".equals(cityId))continue;
+			
+			list = new ArrayList<HashMap<String,Object>>();
+			
+			for(int j = 0;j<brandList.size();j++){
+				if(cityId.equals(memcachedUtil.getString(brandList.get(j).get("CITY")))){
+					list.add(brandList.get(j));
+				}
+			}
+			
+			mcc.set(MemcachedConstant.TW_BRAND_CITY+cityId, list);
+		}
+		
+		logger.info("品牌缓存加载end");
+		
+		/*for(int i = 0;i<cityList.size();i++){
+			cityId = memcachedUtil.getString(cityList.get(i).get("ID"));
+			
+			if("".equals(cityId))continue;
+			
+			System.err.println(mcc.get(MemcachedConstant.TW_BRAND_CITY+cityId));
+		}*/
+	}
+	
+	/**
+	 * 获取有分院的城市下的区域 单个城市下的区域
+	 * @param city
+	 */
+	public List<HashMap<String,Object>> cacheAreaByCityId(String city){
+		logger.info("cityId为"+city+"下的区域缓存加载beg");
+		
+		List<HashMap<String,Object>> areaListByCity = cacheService.findValidAreaByEsid(city);
+		
+		if(areaListByCity == null || areaListByCity.isEmpty()){
+			logger.info("cityId为"+city+"下的区域没有数据");
+			return null;
+		}
+		
+		mcc.set(MemcachedConstant.TW_CITY_AREA+city, areaListByCity);
+		
+		logger.info("cityId为"+city+"下的区域缓存加载end");
+		
+		return areaListByCity;
+	}
+	
+	/**
+	 * 获取有分院的城市下的品牌  单个城市下的品牌
+	 * @param city
+	 */
+	public List<HashMap<String,Object>> cacheBrandByCityId(String city){
+		logger.info("cityId为"+city+"下的品牌缓存加载beg");
+		
+		List<HashMap<String,Object>> brandListByCity = cacheService.findBrandByCityId(city);
+		
+		if(brandListByCity == null || brandListByCity.isEmpty()){
+			logger.info("cityId为"+city+"下的品牌没有数据");
+			return null;
+		}
+		
+		mcc.set(MemcachedConstant.TW_BRAND_CITY+city, brandListByCity);
+		
+		logger.info("cityId为"+city+"下的品牌缓存加载end");
+		
+		return brandListByCity;
+	}
+	
+}

@@ -1,0 +1,439 @@
+package com.sgfm.datacenter.service.product.impl;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sgfm.datacenter.dao.product.RlDao;
+import com.sgfm.datacenter.entity.TAutoStrategy;
+import com.sgfm.datacenter.entity.THolidayStrategy;
+import com.sgfm.datacenter.entity.TPlaydayStrategy;
+import com.sgfm.datacenter.entity.TSigndayStrategy;
+import com.sgfm.datacenter.service.product.RlService;
+
+/**
+ * 日历信息管理业务层实现类
+ * 
+ * @author cliu
+ * 
+ */
+@Service
+public class RlServiceImpl implements RlService {
+
+	@Autowired
+	private RlDao rlDao;
+
+	// 0 今天以前 1 今天以后可以约。 2今天以后可以约，但由于假日策略已经使其变为”休息“了，3 默认策略的人数导致其“已满”，4
+	// 默认策略（如下班时间到18：00后）导致其“暂停预约”，5节假日策略导致
+	/*
+	 * date 是用户切换日历change后的年月日
+	 */
+	public Map<String, String[]> getRiDataByEsid(String esid, String date) {
+		String[] dateArry = date.split("-");
+		// 如果页面传递过来是day是0，则初始化为1
+		if (dateArry[2].equals("0")) {
+			date = dateArry[0] + "-" + dateArry[1] + "-" + "1";
+		}
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date tempdate = sdf.parse(date);
+			calendar.setTime(sdf.parse(date));
+		} catch (ParseException e) {
+
+			e.printStackTrace();
+		}
+
+		// esid="10022";
+		// 下面时间需要是前台传递过来yyyy-mm格式
+
+		int end = calendar.getActualMaximum(calendar.DAY_OF_MONTH);
+		// 根据当月多少天，来初始化每月天数，和预约状态数组
+		String[] args1 = new String[end];// 每月天数
+		String[] args2 = new String[end];// 每天的预约状态0，不可约，1可约
+		// 把今天之前的自然日全部改为不可约
+		for (int i = 1; i <= end; i++) {
+			args1[i - 1] = String.valueOf(i);
+			args2[i - 1] = "0";
+
+		}
+		// 把今天之后的自然日全部改为可约
+		int day = calendar.get(Calendar.DATE);
+		for (int i = day + 1; i <= end; i++) {
+			args2[i - 1] = "1";
+		}
+
+		// 根据策略1过滤后的预约数据,对args2进行状态操作，就是对明天进行预约状态定位
+		args2 = getAutoToData(esid, calendar, day, args2);
+		// 根据策略2：休息日策略来得出args2本月每天的预约状态
+		args2 = getPlaydayToData(esid, calendar, args1, args2);
+		// 根据节假日策略计算
+		args2 = getHoildToData(esid, calendar, args1, args2);
+		// 根据单日策略计算
+		args2 = getSignToData(esid, calendar, args1, args2);
+		// 找出实体店默认策略和预约信息
+		// DBRow[] db=floorMerchantMgr.getRevInfoByEsId(Long.parseLong(esid));
+		Map<String, String[]> map = new HashMap<String, String[]>();
+		map.put("args1", args1);
+		map.put("args2", args2);
+		return map;
+	}
+
+	// 获取休息日的可约状态
+	public String[] getPlaydayToData(String esid, Calendar c, String[] args1, String[] args2) {
+		TPlaydayStrategy playdayStrate = rlDao.getPlayStgByEsid(esid);
+		// 如果没有设置该门店休假日，则预约状态不改变
+		if (playdayStrate == null) {
+			return args2;
+		}
+		String playday1 = playdayStrate.getDay1();
+		String playday2 = playdayStrate.getDay2();
+		// 找出本月的对应休假日的日期，把同休假日匹配的日期设置不可约.
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String year = String.valueOf(c.get(Calendar.YEAR));// 得到年
+		String month = String.valueOf(c.get(Calendar.MONTH) + 1);// 得到月，因为从0开始的，所以要加1
+		String datestr = year + "-" + month + "-";
+		Calendar cal = Calendar.getInstance();
+		try {
+			for (int i = 0; i < args1.length; i++) {
+				String day = args1[i];
+				Date date = sdf.parse(datestr + day);
+				cal.setTime(date);
+				String day_of_week = String.valueOf(cal.get(Calendar.DAY_OF_WEEK));
+				int i1 = Integer.parseInt(day);
+				if (playday1 != null) {
+					if (day_of_week.equals(getDayOfWeek(playday1))) {
+						args2[i] = "2";// 休息日
+					}
+				}
+				if (playday2 != null) {
+					if (day_of_week.equals(getDayOfWeek(playday2))) {
+						args2[i] = "2";
+					}
+				}
+
+			}
+		} catch (NumberFormatException e) {
+
+			e.printStackTrace();
+		} catch (ParseException e) {
+
+			e.printStackTrace();
+		}
+
+		return args2;
+
+	}
+
+	// 获取节假日策略数据
+	public String[] getHoildToData(String esid, Calendar calendar, String[] args1, String[] args2) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String year = String.valueOf(calendar.get(Calendar.YEAR));// 得到年
+		String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);// 得到月，因为从0开始的，所以要加1
+		month = (month.length() == 1) ? "0" + month : month;
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("esid", esid);
+		map.put("startdate", year + "-" + month);
+		List<THolidayStrategy> list = rlDao.getHolidStgByEsid(map);
+		if (list == null)
+			return args2;
+		// 遍历节假日，把对应的节假日中间改为休息
+		for (int i = 0; i < list.size(); i++) {
+			String st = list.get(i).getStartdate().split("-")[2];
+			String end = list.get(i).getEnddate().split("-")[2];
+			int j = Integer.parseInt(st);
+			int k = Integer.parseInt(end);
+			for (int t = j; t <= k; t++) {
+
+				args2[t - 1] = "5";
+
+			}
+
+		}
+		return args2;
+
+	}
+
+	private String getDayOfWeek(String str) {
+		String args1[] = { "周一", "周二", "周三", "周四", "周五", "周六", "周日" };
+		String args2[] = { "2", "3", "4", "5", "6", "7", "1" };
+		String week = "";
+		for (int i = 0; i < args1.length; i++) {
+
+			if (str.equals(args1[i])) {
+				week = args2[i];
+				break;
+			}
+		}
+
+		return week;
+	}
+
+	private boolean getDiffDate(String pageDate) {
+		// beg 判断用户传递过来的时间参数是当前月份还是非当前月份，如果是看当前月份的日历才存在要区分明天是否要预约
+		Calendar thisCalendar = Calendar.getInstance();
+		// String pageDate=year+"-"+month;
+		String thisYear = String.valueOf(thisCalendar.get(Calendar.YEAR));// 得到年
+		String thisMoth = String.valueOf(thisCalendar.get(Calendar.MONTH) + 1);// 得到月，因为从0开始的，所以要加1
+		String thisAddDate = thisYear + "-" + thisMoth;
+		if (pageDate.equals(thisAddDate)) {
+			return true;
+		}
+		return false;
+		// end 判断用户传递过来的时间参数是当前月份还是非当前月份，如果是看当前月份的日历才存在要区分明天是否要预约
+	}
+
+	// 根据默认策略的暂停时间来显示
+	/*
+	 * calendar 是页面切换年月日时候传递过来的，如果day=0，则day是1
+	 */
+	public String[] getAutoToData(String esid, Calendar calendar, int thisday, String[] args2) {
+		// DBRow autoStrate=
+		// floorMerchantMgr.getAutostrategyByEsId(Long.parseLong(esid));
+		TAutoStrategy ta = rlDao.getAutoStgByEsidAndDate(esid);
+		if (ta == null) {
+			ta = new TAutoStrategy();
+			ta.setHour("00");
+			ta.setMinute("00");
+			ta.setSecond("00");
+			ta.setPersonCount(new BigDecimal("100"));
+
+		}
+
+		// 如果设置时间存在才改变日历状态，根据时间
+		String hour = ta.getHour();
+		String personCount = (ta.getPersonCount() == null) ? "" : ta.getPersonCount().toString();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String year = String.valueOf(calendar.get(Calendar.YEAR));// 得页面传递过来的年
+		String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);// 得到月，因为从0开始的，所以要加1
+
+		// beg 判断用户传递过来的时间参数是当前月份还是非当前月份，如果是看当前月份的日历才存在要区分明天是否要预约
+		if (getDiffDate(year + "-" + month)) {
+
+			// end 判断用户传递过来的时间参数是当前月份还是非当前月份，如果是看当前月份的日历才存在要区分明天是否要预约
+
+			month = (month.length() == 1) ? "0" + month : month;
+			String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));// 得到天
+
+			if (!hour.equals("")) {
+				String minute = ta.getMinute();
+				String secont = ta.getSecond();
+
+				// 获取今天的日期，和默认策略的时分秒结合数据
+				String datestr = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + secont;
+				try {
+					Date date = sdf.parse(datestr);
+					// 如果当前日期已经超过了默认时间的时分秒
+					// ,明天是不可约的，因为calendar只是传递过来年月日，不满足比对，所以要转换为年月日时分秒
+					// 默认策略需要使用带年月日，时分秒，因为默认策略有个暂停时间的比较.
+					Date date3 = getYmdToYmdHms(calendar);
+					// 如果时分秒是00:00:00则明天都可约
+					if (hour.equals("00") && minute.equals("00") && secont.equals("00")) {
+						// args2[thisday]="4";
+					} else if (date3.after(date)) {
+						if (thisday == 31) {
+							args2[thisday - 1] = "4";
+						} else {
+							args2[thisday] = "4";
+						}
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		// 如果该实体店设置了可约人数总数则，改变可约状态
+		if (!personCount.equals("")) {
+			// DBRow[] limitPerson= floorMerchantMgr.getPlaydayStratByEsId(
+			// Long.parseLong(esid),year+"-"+month,personCount);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("esid", esid);
+			map.put("creater_time", year + "-" + month);
+			map.put("count", personCount);
+			List<Map<String, Object>> res = rlDao.getReservationByEcd2(map);
+			if (res == null)
+				res = new ArrayList<Map<String, Object>>();
+			for (int i = 0; i < res.size(); i++) {
+				String creater_time = (String) res.get(i).get("CREATER_TIME");// limitPerson[i].getString("creater_time");
+				creater_time = creater_time.split("-")[2];
+				String str = creater_time.substring(0, 1);
+				if (creater_time.length() == 2 && str.equals("0")) {
+					str = creater_time.substring(1, 2);
+				} else {
+					str = creater_time;
+				}
+
+				int temp = Integer.parseInt(creater_time) - 1;
+				args2[temp] = "3";
+			}
+		}
+
+		return args2;
+
+	}
+
+	// 获取单日
+	public String[] getSignToData(String esid, Calendar calendar, String[] args1, String[] args2) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String year = String.valueOf(calendar.get(Calendar.YEAR));// 得到年
+			String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);// 得到月，因为从0开始的，所以要加1
+			month = (month.length() == 1) ? "0" + month : month;
+			// DBRow [] signStrate=
+			// floorMerchantMgr.getSignStratByEsId(Long.parseLong(esid),year+"-"+month);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("esid", esid);
+			map.put("date", year + "-" + month);
+			List<TSigndayStrategy> signList = rlDao.getSignStgByEsid(map);
+
+			// 遍历节假日，把对应的节假日中间改为休息 0 预约 1 休息日 2节假日
+			for (int i = 0; i < signList.size(); i++) {
+				String type = signList.get(i).getType2();
+				int day = Integer.parseInt(signList.get(i).getDay().split("-")[2]);// 获取年月日时间
+				if (type.equals("0")) {
+					int count = Integer.parseInt(signList.get(i).getPersonCount());
+					String suspend_date = signList.get(i).getSuspendDate();// 获取暂停时间
+
+					// DBRow dbrow=
+					// floorMerchantMgr.getRevInfoByEsIdAndDate(Long.parseLong(esid),
+					// signStrate[i].getString("day"));
+					map.put("date", signList.get(i).getDay());
+					String count2 = String.valueOf(rlDao.getRevCountByEsid(map));
+					// String count2 =dbrow.getString("count");
+					count2 = (count2.equals("")) ? "0" : count2;
+					// 首先判断该单日策略当天的设定人数参数是多少，0则表示已满，否则再看已经预约的人数是是否大于可约人数
+					if (count == 0) {
+						args2[day - 1] = "3";
+						continue;
+					}
+					// 如果单日已经预约的总人数大于设置的人数则 修改为4
+					else {
+						// 如果已经预约的人数大于设置的可约人数参数则直接为已满
+						if (Integer.parseInt(count2) >= count) {
+							args2[day - 1] = "3";
+							continue;
+						}
+						// 如果没有到预约人数上限且改天可约，则看是否到了暂停预约时间
+						else {
+						    
+							sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							Date tempDate = sdf.parse(suspend_date);
+							int day1 = tempDate.getHours();
+							int minute1 = tempDate.getMinutes();
+							int sec1 = tempDate.getSeconds();
+							int sumdate = day1 + minute1 + sec1;
+							
+							sdf = new SimpleDateFormat("yyyy-MM-dd");
+							Date date = new Date();
+							Calendar calendar2 = new GregorianCalendar(); 
+							calendar2.setTime(date); 
+							calendar2.add(calendar.DATE,differentDays(date,tempDate));//把当前时间的日期推到该单日策略的日期
+						    date=calendar2.getTime();   
+						    String time = sdf.format(date);
+							
+							// 如果该天人数没有到上限，且没有时间限制则 时分秒均为0则改天可约
+							if (sumdate == 0) {
+								args2[day - 1] = "1";
+								continue;
+							}
+							// 如果该门店下面的单日和系统时间一样，表示当天，则比较当前系统时间是否在暂停预约的时间后面
+							else if (signList.get(i).getDay().equals(time)) {
+								if ((date).after(tempDate)) {
+									args2[day - 1] = "4";//
+								}
+
+							}
+						}
+					}
+
+					// args2[day-1]="1";
+
+				} else if (type.equals("1")) {
+					args2[day - 1] = "2";// 休息日
+				} else if (type.equals("2")) {
+					args2[day - 1] = "5";// 节假日
+
+				}
+
+			}
+		} catch (NumberFormatException e) {
+
+			e.printStackTrace();
+		} catch (ParseException e) {
+
+			e.printStackTrace();
+		}
+		return args2;
+
+	}
+
+	private Date getYmdToYmdHms(Calendar c) {
+		Date retDate = null;
+		Calendar c1 = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String strdate = sdf.format(c1.getTime());
+
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		String strdate2 = sdf2.format(c.getTime());
+
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		String strResult = strdate2 + " " + strdate;
+
+		try {
+			c.setTime(sdf3.parse(strResult));
+			retDate = c.getTime();
+		} catch (ParseException e) {
+
+			e.printStackTrace();
+		}
+		return retDate;
+	}
+
+	public int differentDays(Date date1,Date date2)
+    {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        int day1= cal1.get(Calendar.DAY_OF_YEAR);
+        int day2 = cal2.get(Calendar.DAY_OF_YEAR);
+        
+        int year1 = cal1.get(Calendar.YEAR);
+        int year2 = cal2.get(Calendar.YEAR);
+        if(year1 != year2)   //同一年
+        {
+            int timeDistance = 0 ;
+            for(int i = year1 ; i < year2 ; i ++)
+            {
+                if(i%4==0 && i%100!=0 || i%400==0)    //闰年            
+                {
+                    timeDistance += 366;
+                }
+                else    //不是闰年
+                {
+                    timeDistance += 365;
+                }
+            }
+            
+            return timeDistance + (day2-day1) ;
+        }
+        else    //不同年
+        {
+            return day2-day1;
+        }
+    }
+	
+}

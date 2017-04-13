@@ -1,0 +1,24 @@
+package com.sgfm.datacenter.dao.common;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.sgfm.base.dao.BaseDao;
+
+
+
+@Repository
+@SuppressWarnings("unchecked")
+public class CommonDao extends BaseDao {
+
+	public List<Map> getAllProductRatios() {
+		return super.getSqlMapClientTemplate().queryForList("commonMap.getAllProductRatios");
+	}
+	
+	public int getTodayMsgCount(String date) {
+		return (Integer) getSqlMapClientTemplate().queryForObject("commonMap.getTodayMsgCount", date);
+	}
+
+}

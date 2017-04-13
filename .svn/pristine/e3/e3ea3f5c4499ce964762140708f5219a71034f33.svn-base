@@ -1,0 +1,402 @@
+package com.sgfm.datacenter.action.user;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.sgfm.base.action.BaseAction;
+import com.sgfm.datacenter.SysConstant;
+import com.sgfm.datacenter.entity.TMember;
+import com.sgfm.datacenter.exception.AppException;
+import com.sgfm.datacenter.service.order.OrderService;
+import com.sgfm.datacenter.service.user.UserService;
+import com.sgfm.datacenter.util.JsonResponseResult;
+import com.sgfm.datacenter.util.SysUtils;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+@Controller
+@Scope("prototype")
+public class UserAction extends BaseAction {
+
+	private static final long serialVersionUID = 1L;
+
+	private Log logger = LogFactory.getLog(this.getClass());
+	
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private OrderService orderService;
+	
+	public TMember tMember = new TMember();
+
+
+	/**
+	 * 跳转至个人中心
+	 * 
+	 * @return
+	 * @author JingZeKuan
+	 */
+	public String toPerCenPage() {
+	   try {
+		  tMember = (TMember)getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+		  if(tMember==null){
+			  return super.toContentView("user", "register");
+		  }
+		  HashMap<String,Object> infoMap =  userService.getPerCenterInfo(tMember);
+		  super.getRequest().setAttribute("tMember", tMember);
+		  super.getRequest().setAttribute("infoMap", infoMap);
+        } catch (final AppException app) {
+            this.logger.error(app);
+        } catch (final Exception e) {
+        	e.printStackTrace();
+            this.logger.error(e);
+        }		
+		super.getRequest().setAttribute("title", "个人中心");
+		return super.toContentView("user", "perCen");
+	}
+	
+	/**
+	 * 我的订单页面
+	 * @return
+	 */
+	public String findUserOrder() {
+		try {
+			tMember = (TMember) getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+			String mid = String.valueOf(tMember.getMid());
+			HashMap<String,Object> map = new HashMap<String,Object>();
+			map.put("mid", mid);
+			Map<String,Object> returnMap = orderService.findUserOrder(map);
+			super.getRequest().setAttribute("orderList", returnMap.get("list"));
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return super.toContentView("user", "usercenter_order");
+	}
+	
+	/**
+	 * 取消订单
+	 * @return
+	 */
+	public String changeOrderIsValid()
+	{
+		JsonResponseResult result = JsonResponseResult.createSuccess();
+		try{
+			String oid=super.getRequest().getParameter("oid");
+			userService.changeOrderIsValid(oid);
+			result.setReturncode(0);
+			super.jsonResult = JSONObject.fromObject(result).toString();
+			} catch (final AppException app) {
+	            this.logger.error(app);
+	        } catch (final Exception e) {
+	            this.logger.error(e);
+	    }
+		return BaseAction.JSON;
+	}
+	
+	/**
+	 * 我的体检卡页面
+	 * @return
+	 */
+	public String findUserCard() {
+		try {
+			super.getRequest().setAttribute("title", "我的卡密");
+			tMember = (TMember) super.getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+			String mid = String.valueOf(tMember.getMid());
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("mid", mid);
+			HashMap<String,Object> data = orderService.findUserCardByMid(map);
+			super.getRequest().setAttribute("cardList", data.get("list"));
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return super.toContentView("user", "usercenter_cardpwd");
+	}
+	
+	
+	/**
+	 * 跳转到我的优惠卷页面
+	 * @return
+	 */
+	public String toCouponPage()
+	{
+		try {
+			tMember = (TMember) getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+
+			int mid = tMember.getMid();
+
+			HashMap<String,Object> map = new HashMap<String,Object>();
+			map.put("mid", mid);
+
+//	     	List<Map> list = userService.findUserCoupon(map);
+//			super.getRequest().setAttribute("couponLogs", list);
+//
+//			double balance = userService.findCouponBalanceByMid(mid);
+//	    	balance = new BigDecimal(balance).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+//			
+//	    	super.getRequest().setAttribute("balance", balance);
+//	     	List<Map> list2 = userService.findUserIntegration(map);
+//			super.getRequest().setAttribute("integrationLogs", list2);
+//
+//			Integer integration = userService.findIntegrationByMid(mid);
+//			super.getRequest().setAttribute("totalIntegration", integration);
+			
+			super.getRequest().setAttribute("title", "我的优惠卷");		
+		} catch (final AppException app){
+			logger.error(app);
+		} catch (final Exception e){
+			e.printStackTrace();	
+		}
+       return toContentView("user","coupon");		
+	}
+	
+	
+	/**
+	 * 卡密详情页
+	 * @return
+	 */
+	public String toCardInfo() {
+		Map<String,Object> param = new HashMap<String,Object>(8);
+		HttpServletRequest request = getRequest();
+		try {
+			request.setAttribute("title", "卡密详情");
+			tMember = (TMember) super.getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+			//测试人员id
+			//param.put("mid",15852);
+			param.put("mid", tMember.getMid());
+			param.put("oid", request.getParameter("oid"));
+			param.put("card", request.getParameter("card"));
+			param.put("password", request.getParameter("pwd"));
+			HashMap<String,Object> card = orderService.findCardInfo(param);
+			request.setAttribute("card", card);
+		}catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return toContentView("user","usercenter_cardInfo");
+	}
+	
+	
+	/**
+	 * 我的预约页面
+	 * @return
+	 */
+	public String findUserReservation(){
+		HttpServletRequest request = getRequest();
+		Map<String,Object> param = new HashMap<String,Object>(4);
+		try{
+			request.setAttribute("title", "我的预约");
+			tMember = (TMember) super.getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+			param.put("mid", tMember.getMid());
+			param.put("mobile", tMember.getMobile());
+//			HashMap<String,Object> data = reservationService.findReservationInfoByMid(param);
+//			request.setAttribute("reservationList", data.get("list"));
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return toContentView("user","usercenter_reservation");
+	}		
+	
+	/**
+	 * 预约单详情页
+	 * @return
+	 */
+	public String toReservationInfo() {
+		Map<String,Object> param = new HashMap<String,Object>();
+		HashMap<String,Object> data = null;
+		try{
+			super.getRequest().setAttribute("title","预约单详情");
+			tMember = (TMember) super.getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+			param.put("mid", tMember.getMid());
+			param.put("rid", super.getRequest().getParameter("rid"));
+			int rtype = Integer.valueOf(super.getRequest().getParameter("rtype"));
+			switch (rtype) {
+			case 1 :
+				//data = reservationService.findOnlinePayReservationInfo(param);
+				break;
+			case 2 :
+				//data = reservationService.findGroupbuyReservationInfo(param);
+				break;
+			case 3:
+				//data = reservationService.findOnlinePayReservationInfo(param);
+				break;
+			case 4:
+				//data = reservationService.findShopPayReservationInfo(param);
+				break;
+			}
+			data.put("rtype", rtype);
+			super.getRequest().setAttribute("reservation", data);
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return toContentView("user","usercenter_reservationInfo");
+	}
+	
+	
+	//修改体检卡预约信息
+	public String toUpdateOnlinePayReservation() {
+			Map<String,Object> param = new HashMap<String,Object>();
+			HttpServletRequest request = getRequest();
+			try {
+				request.setAttribute("title","修改预约单");
+				String proSex = request.getParameter("pro_sex");
+//					tProductAttr.setProSex(Integer.parseInt(proSex));
+//					tProductAttr.setPid(Integer.valueOf(request.getParameter("pid")));
+				tMember = (TMember) super.getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+				param.put("mid", tMember.getMid());
+				param.put("rid", request.getParameter("rid"));
+//					Map<String,Object> data = reservationService.getReservationInfoForUpdate(tProductAttr);
+//					//体检卡预约信息
+//					HashMap<String, Object> reservation = reservationService.findOnlinePayReservationInfo(param);
+//					request.setAttribute("re", reservation);
+//					request.setAttribute("cityMap", data.get("cityMap"));
+//					request.setAttribute("hospitalCity", JSONArray.fromObject(data.get("hospitalCity")).toString());
+//					request.setAttribute("hospitalName", JSONArray.fromObject(data.get("hospitalName")).toString());
+//					request.setAttribute("esidAndAddress", JSONArray.fromObject(data.get("esidAndAddress")).toString());
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return toContentView("user","usercenter_updateCardReservation");
+	}
+	
+	//TODO 修改到店付款预约单
+	public String toUpdateShopReservation() {
+		Map<String,Object> param = new HashMap<String,Object>();
+		HttpServletRequest request = getRequest();
+		try {
+			request.setAttribute("title","修改预约单");
+			String proSex = request.getParameter("pro_sex");
+//				tProductAttr.setProSex(Integer.parseInt(proSex));
+//				tProductAttr.setPid(Integer.valueOf(request.getParameter("pid")));
+			tMember = (TMember) super.getFromSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO);
+			param.put("mid", tMember.getMid());
+			param.put("rid", request.getParameter("rid"));
+//				Map<String,Object> data = reservationService.getReservationInfoForUpdate(tProductAttr);
+//				//到店预约信息
+//				HashMap<String, Object> reservation = reservationService.findShopPayReservationInfo(param);
+//				
+//				request.setAttribute("re", reservation);
+//				request.setAttribute("cityMap", data.get("cityMap"));
+//				request.setAttribute("hospitalCity", JSONArray.fromObject(data.get("hospitalCity")).toString());
+//				request.setAttribute("hospitalName", JSONArray.fromObject(data.get("hospitalName")).toString());
+//				request.setAttribute("esidAndAddress", JSONArray.fromObject(data.get("esidAndAddress")).toString());
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return toContentView("user","usercenter_updateShopReservation");
+	}
+	
+	
+	public String findRegisterByAccount(){
+		JsonResponseResult result = null;
+        try {
+        	tMember = userService.findMemberByAccountOrMobile(tMember);				//查询是否有这个账户
+        	if (null !=tMember){
+        		result = JsonResponseResult.createFalied("该账号已被注册过！");
+        	} else{
+        		result = JsonResponseResult.createSuccess();
+        	}
+        } catch (final AppException app) {
+            this.logger.error(app);
+        } catch (final Exception e) {
+            this.logger.error(e);
+        }
+        this.logger.debug("action:" + this.jsonResult);
+        super.jsonResult = JSONObject.fromObject(result).toString();
+        return BaseAction.JSON;
+	}
+
+	public String doRegister() {
+		JsonResponseResult result = null;
+		try {
+			String pageYzm = super.getRequest().getParameter("captchas");
+			String yzm = super.getFromSession("captcha").toString();
+			if (!pageYzm.equals(yzm)) {
+				result = JsonResponseResult.createFalied("验证码输入错误!");
+				super.jsonResult = JSONObject.fromObject(result).toString();
+				return BaseAction.JSON;
+			}
+			// 防止重复注册
+			Integer isMember = (Integer) super.getFromSession(SysConstant.IS_MEMBER);
+			String openid = (String) super.getFromSession(SysConstant.OPENID);
+			TMember openidMember = userService.findMemberByAccountOrMobile(tMember);
+			if (!SysUtils.isEmpty(openidMember)) {
+				result = JsonResponseResult.createFalied("该账号已经注册过!");
+				super.jsonResult = JSONObject.fromObject(result).toString();
+			}else{
+				if(isMember == 1){
+					//没有openid 注册
+					tMember.setOpenid(openid);
+					tMember.setMType(1);
+					tMember.setRegisterDate(SysUtils.getTime());
+					tMember.setLastLogin(SysUtils.getTime());
+					userService.doRegisterNewMember(tMember);
+				}else{
+					//有openid 修改
+					tMember.setOpenid(openid);
+					tMember.setMType(3);
+					tMember.setLastLogin(SysUtils.getTime());
+					userService.updMemberByOpenid(tMember);
+				}
+				super.setToSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO, tMember);
+				result = JsonResponseResult.createSuccess();
+				super.jsonResult = JSONObject.fromObject(result).toString();
+			}
+			
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return BaseAction.JSON;
+	}
+	
+	/**
+	 * 修改密码
+	 * @return
+	 */
+	public String updPassWord(){
+		JsonResponseResult result = null;
+		try {
+				String mobile = super.getRequest().getParameter("mobile");
+				String password = super.getRequest().getParameter("pwd");
+//	        	tMember = this.loginService.findForget_passwordByMobile(mobile);
+//	        	tMember.setPwd(SysUtils.MD5(password));												//给密码赋值
+//	        	loginService.updPwdByMid(tMember);													//修改密码
+	        	result = JsonResponseResult.createSuccess();
+        } catch (final AppException app) {
+        	this.logger.error(app);
+            String msg = this.getText(app.getMessage());
+            result = JsonResponseResult.createFalied(msg);
+        } catch (final Exception e) {
+        	this.logger.error(e);
+        	final String msg = this.getText("操作失败，请稍后再试！");
+			result = JsonResponseResult.createFalied(msg);
+        }
+        this.jsonResult = JSONObject.fromObject(result).toString();
+        return BaseAction.JSON;
+	}
+}

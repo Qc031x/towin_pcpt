@@ -1,0 +1,39 @@
+字典控件使用说明
+1.将jar中的tlg描述文件复制到WEB-INF下的tld目录
+2.继承com.sgfm.datacenter.tag.DictTag类，实现以下抽象方法：
+	/**
+	 * 获取指定类型下的字典列表。<br>
+	 * 使用字典标签的时候，需要实现本方法。
+	 * 
+	 * @param dictType
+	 * @return
+	 */
+	public abstract List<Dict> getDictListByTypeList(String dictType);
+3.修改这个tld文件，如：
+	<tag-class> com.sgfm.datacenter.tag.DictTagImpl</tag-class>
+	
+	
+页面使用方法：
+示例：
+导入标签：
+<%@taglib uri="/WEB-INF/tld/dict.tld" prefix="dict" %>
+
+使用：
+<dict:dictTag name="status" dictType="GAME_STATUS" controlType="1" className="SELECT1 f-blue1" selectValue="1"></page:dictTag>
+
+属性：
+selectValue	默认选择的值,该值为字典表的dictCode
+controlType	控件类型：下拉框(1)、单选按钮(1)、文本(3)、复选框(4)
+dictType	根据此值决定取字典的哪一类数据
+filterStr	过滤掉这些值,值与值之间逗号隔开，如 "001","002"
+showTip		是否显示“请选择...”提示语,默认会显示
+isDESC		是否降序展示列表
+
+以下属性同普通控制属性
+id		
+name		
+className	
+tabIndex
+onchange
+style	
+

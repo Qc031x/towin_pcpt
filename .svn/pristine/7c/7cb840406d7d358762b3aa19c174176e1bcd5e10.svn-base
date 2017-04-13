@@ -1,0 +1,11 @@
+.fenye{height:24px; clear:both; padding:20px 0; margin:0 auto; line-height:22px; font-size:12px; color:#7B7B7B; text-align:center;}
+.fenye span{height:24px; padding:0 5px; display:inline-block; font-size:12px;}
+.fenye span em{color:#FF8F00;}
+.fenye a{height:22px; padding:0 8px; display:inline-block; margin:0; background:#fff; color:#3D3D3D; border:solid 1px #ddd;}
+.fenye a u{text-decoration:none;}
+.fenye a:hover,.fenye a.active{color:#FE8F01; border:solid 1px #FE8F01;}
+.fenye a.pre,.fenye a.pre.disable{background:#fff url(/images/fenyeprenextbg.jpg) 0 0 repeat-x;}
+.fenye a.next,.fenye a.next.disable{background:#fff url(/images/fenyeprenextbg.jpg) 0 0 repeat-x;}
+.fenye .xlyslb{height:22px; line-height:22px; display:inline-block; border:1px #ddd solid; outline:none; font-size:12px; font-family:"Microsoft YaHei";}
+.fenye .t_input{width:30px;}
+input#btn_go {background:#fff url(/images/fenyeprenextbg.jpg) 0 0 repeat-x; border-radius:3px;}

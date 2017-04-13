@@ -1,0 +1,68 @@
+(function($) {
+	$(".buybtn1").on("click", function(){
+		var url = "/core/order.addRsToCookie.do",
+			data = {"pid" : $("#pid").val(), "quantity" : $(".goumaishu input").val()};
+		toAddRsCookie(url, data);
+	});
+	$("#cardSubmit").sgfmform({
+		btnSubmit: "#cardSub",
+		ajaxurl : "/core/order.addCardToCookie.do",
+		tiptype : 1,
+		submittype : 2,
+		callback : function(data, url){
+			if(data.returncode == 0){
+				window.location.href = "/core/order.toCardConfirm.do?TK="+data.data[0];
+			}else{
+				window.location.href = "/content/user.register.do?backurl="+encodeURIComponent(data.data[0])+"&data="+encodeURIComponent(JSON.stringify(data.data[1]));
+			}
+		}
+	});
+	
+	
+	$("#tanyieyi").click(function(){$(".fix_reg_xieyi").fadeIn();});
+	$(".fixxieyitit .guanbifixxy").click(function(){$(".fix_reg_xieyi").fadeOut();});
+	
+	$('#captchas').val('');
+	
+	$("#registerForm").sgfmform({
+		btnSubmit  : '#doRegister',
+		ajaxurl    : '/core/user.doRegister.do',
+		tiptype    : 2,
+		submittype : 2,
+		callback   : function(data,url){
+			if (data.returncode == 0){
+				var url = decodeURIComponent(window.location.href);
+				var urlData = url.substring((Number(url.indexOf("=")) + 1), url.indexOf("&"));
+				var jsonData = url.substr(url.indexOf("{"), url.length);
+				if(urlData.indexOf("Card") > -1){
+					toAddCardCookie(urlData, JSON.parse(jsonData));
+				}else{
+					toAddRsCookie(urlData, JSON.parse(jsonData));
+				}
+			}else{
+				alert("注册失败,请稍后刷新继续!");
+			}
+		}
+	});
+})(jQuery)
+
+function toAddRsCookie(url, data){
+	$.getMyJSON(url, data, function(returndata) {
+		if(returndata.returncode == 0){
+			window.location.href = "/core/order.toRsConfirm.do?TK="+returndata.data[0];
+		}else{
+			window.location.href = "/content/user.register.do?backurl="+encodeURIComponent(url)+"&data="+encodeURIComponent(JSON.stringify(data));
+		}
+	});
+}
+
+function toAddCardCookie(url, data){
+	$.getMyJSON(url, data, function(returndata) {
+		if(returndata.returncode == 0){
+			window.location.href = "/core/order.toCardConfirm.do?TK="+returndata.data[0];
+		}else{
+			window.location.href = "/content/user.register.do?backurl="+encodeURIComponent(returndata.data[0])+"&data="+encodeURIComponent(JSON.stringify(returndata.data[1]));
+		}
+	});
+}
+

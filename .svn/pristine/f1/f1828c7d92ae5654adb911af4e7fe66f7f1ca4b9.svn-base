@@ -1,0 +1,26 @@
+body{background: #fff;}
+/**/
+.myOrder{background:#fff;overflow:hidden; cursor: pointer; width: 100%; border-bottom: 0.5rem solid #eeeff3;}
+.myOrder a{width:23.5%; height: 2.175rem; line-height: 2.075rem; border-bottom: 0.1rem solid #fff; margin: 0 14.7% 0 0; display:inline-block; float:left; text-align:center; box-sizing:border-box; overflow:hidden; font-size: 0.7rem;}
+.myOrder a:last-child{margin: 0;}
+.myOrder a.active{border-bottom: 0.1rem solid #027ac8;}
+.myOrder a span{font-size: 0.55rem;}
+.myOrder a span em{color: #e25d39}
+/**/
+.cardInfo{margin: 0.5rem 0.5rem 1rem; overflow: hidden; max-width: 640px;}
+.cardInfo .infoBg{ width: 15rem; height: 6.25rem; border-radius: 0.25rem; position: relative;}
+.cardInfo .infoBg .infoBgL{width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #fff; display: block; position: absolute; left: -0.4rem; top: 1.15rem;}
+.cardInfo .infoBg .infoBgR{right: -0.4rem; left: auto;}
+.cardInfo .infoBg .info{width: 100%; height: 6.25rem; padding: 0 0.75rem 0 1.0rem; color: #fff;}
+.cardInfo .infoBg .fail{background: url(../images/hstmbg.png); border-radius: 0.25rem;}
+.cardInfo .infoBg .info .p1{line-height: 1.425rem; height: 1.425rem; font-size: 0.5rem; margin: 0 0 0.775rem 0; overflow: hidden;}
+.cardInfo .infoBg .info h1{line-height: 1.25rem; height: 1.25rem; font-size: 0.8rem; overflow: hidden;}
+.cardInfo .infoBg .info .p2{line-height: 1.15rem; height: 1.15rem; font-size: 0.65rem; overflow: hidden;}
+.cardInfo .infoBg .info .p3{line-height: 1.325rem; height: 1.325rem; font-size: 0.5rem; overflow: hidden;}
+.cardInfo .infoBg .info .p3 span{display: block; float: left;}
+.cardInfo .infoBg .info .p3 span:last-child{float: right; font-size: 0.7rem;}
+
+.protip {line-height: 20px;padding: 10px 10px;background-color: #fff;font-size: 13px;font-weight: bold;color: #716f6f;border-top: #e8e8e8 1px solid;border-bottom: #e8e8e8 1px solid; text-align:center;}
+.protip  a{ color: #027ac8;}
+
+.allCard,.beforeCard,.afterCard{overflow: hidden;}

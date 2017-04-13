@@ -1,0 +1,41 @@
+body{background: #fff;}
+
+/**/
+.myOrder{background:#fff;overflow:hidden; cursor: pointer; width: 100%; border-bottom: 0.4rem solid #eeeff3;}
+.myOrder a{width:23.5%; height: 2.175rem; line-height: 2.075rem; border-bottom: 0.1rem solid #fff; margin: 0 14.7% 0 0; display:inline-block; float:left; text-align:center; box-sizing:border-box; overflow:hidden; font-size: 0.7rem;}
+.myOrder a:last-child{margin: 0;}
+.myOrder a.active{border-bottom: 0.1rem solid #027ac8;}
+.myOrder a span{font-size: 0.55rem;}
+.myOrder a span em{color: #e25d39}
+
+/**/
+.orderInfo{overflow: hidden; border-bottom: 0.4rem solid #eeeff3;}
+.orderInfo .orderTop{font-size: 0.6rem; color: #999; height: 1.55rem; line-height: 1.55rem; padding: 0 0.5rem;}
+.orderInfo .orderTop span{display: block; float: left;}
+.orderInfo .orderTop span:last-child{float: right;}
+
+.orderCon{height: 3.425rem; padding:  0 0.5rem; background: #f6f6f6;border-bottom: 1px solid #e8e8e8;}
+.newBg{background: #fff; border-top: 2px solid #e8e8e8;}
+.orderCon a{display: block;overflow: hidden;padding: 0.5rem 0;}
+.orderCon a img{float: left;width: 3.6rem; height: 2.425rem;}
+.orderCon a .proinfo{margin-left: 4.25rem;}
+.orderCon a .proinfo i{color: #6e6e6f;}
+.orderCon a .proinfo p{margin: 0;padding: 0; font-size:0.6rem; color: #4b4643;}
+.orderCon a .proinfo p:first-child{margin: -0.07rem 0 0; height: 0.9rem; overflow: hidden;}
+.orderCon a .proinfo p b{ color: #e25d39; font-size:0.6rem;}
+.orderCon a .proinfo p em{ color: #999999; margin-left: 0.25rem; font-style: normal; text-decoration: line-through; }
+.orderCon a .proinfo .sold{ color: #999; font-size:0.6rem; line-height: 0.8rem; height: 0.8rem;}
+.orderCon a .proinfo p span{display: block; float: left;}
+.orderCon a .proinfo p span:last-child{float: right; color: #e25d39; text-decoration: underline;}
+.orderCon a .proinfo p span.newDec{text-decoration: none;}
+
+.orderBot{height: 2.175rem; padding:  0 0.5rem; font-size: 0.6rem;}
+.orderBot a{display: block; float: right; line-height: 1.075rem; padding: 0 0.5rem; background: #bfbfbf; color: #fff; border-radius: 0.125rem; margin: 0.6rem 0 0;}
+.orderBot a.firsra{margin: 0.6rem 0 0 0.5rem; background: #e25d39;}
+
+.orderBot .allPay{display: block; float: left; line-height: 2.175rem; color: #e2603e;}
+.orderBot .status{display: block; float: right; line-height: 2.175rem; color: #e2603e;}
+
+.imgbox1{ position: relative; float: left}
+.imgbox1 img{ border-radius: 0.15rem; width: 100%;}
+.imgbox1 .recommend{ position: absolute; height: 1.0rem; top: 0; bottom: 0; margin: auto; left: 9%; color: #fff; font-size: 0.3rem; font-weight: bold;}

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CardMap">
+
+   
+	<!-- 查询有商品的城市-->
+	<select id="findAllCity" resultClass="java.util.HashMap">
+		select id,substr(title, 0, length(title)-1 ) as title,area_code,city_code,parentid from t_area 
+		where id in(select city from t_hospital_entity where is_cooperate = 1) order by title asc
+	</select>
+
+   <sql id="newproductCondition">
+           <isNotEmpty prepend=" AND " property="price">  
+            	<isEqual property="price" compareValue="1">
+            		 (NVL(p.shop_price,0)<![CDATA[<]]> 500) 
+            	</isEqual>
+            	<isEqual property="price" compareValue="2">
+            		 (NVL(p.shop_price,0) <![CDATA[>=]]> 500 and NVL(p.shop_price,0) <![CDATA[<=]]> 1000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="3">
+            		 (NVL(p.shop_price,0) <![CDATA[>=]]> 1001 and NVL(p.shop_price,0) <![CDATA[<=]]> 2000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="4">
+            	 (NVL(p.shop_price,0) <![CDATA[>=]]> 2001 and NVL(p.shop_price,0) <![CDATA[<=]]> 3000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="5">
+            		(NVL(p.shop_price,0) <![CDATA[>=]]> 3001 and NVL(p.shop_price,0) <![CDATA[<=]]> 5000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="6">
+            		( NVL(p.shop_price,0) <![CDATA[>]]> 5000)
+            	</isEqual>
+          </isNotEmpty>
+          <!-- 新增对性别的筛选  begin-->
+          <isNotEmpty prepend="AND" property="proSex">
+          		p.sex = #proSex#
+          </isNotEmpty>
+          <!-- 新增对性别的筛选  end-->
+          <isNotEmpty  prepend="and" property="majorList">
+          p.pid in
+          <iterate  property="majorList" open="(" close=")" conjunction=",">
+            #majorList[].PRODUCT_ID#   
+		 </iterate>
+         </isNotEmpty>
+         <isNotEmpty property="priceCustom">
+           	$priceCustom$
+         </isNotEmpty>
+    </sql>
+    <!-- 根据条件获取体检卡 -->
+	<select id="findCardListByCondition" resultClass="java.util.HashMap">
+		<include refid="BaseMap.oraPageSqlPrefix2"/>
+		SELECT ppd.*,row_number() over (ORDER BY  
+		           <isEmpty property="paixu">
+		             NVL(ppd.shop_price,0) asc,ppd.pid desc
+		           </isEmpty>
+		            	<isEqual property="paixu"  compareValue="pricessdesc">
+		            		 NVL(ppd.shop_price,0) desc
+		            	</isEqual>
+		            	<isEqual property="paixu"  compareValue="pricessasc">
+		            		 NVL(ppd.shop_price,0) asc
+		            	</isEqual>
+		         	) midTab_id 
+		    from (
+			SELECT phd.pid,phd.shop_price,wm_concat(phd.htkey || ',') htkey,wm_concat(spt.key || ',') ptkey from (
+			
+			SELECT sp.pid,sp.shop_price,tcs.key htkey from S_PRODUCT sp
+			INNER JOIN S_PRODUCT_ENTITY spe on spe.pid=sp.pid
+			INNER JOIN T_CAR_SERVICES tcs on tcs.csid=spe.csid
+			INNER JOIN t_hospital_entity the ON the.esid = spe.esid
+			where sp.status=2 and sp.pscope in (2,3) and the.city=#city#
+			GROUP BY sp.pid,sp.shop_price,tcs.key
+			
+			) phd 
+			INNER JOIN S_PRODUCT_TYPE spt on spt.pid=phd.pid
+			GROUP BY phd.pid,phd.shop_price
+			) ppd
+			where 1=1
+			<isNotEmpty prepend=" AND " property="hosptType">  
+            	<isEqual property="hosptType" compareValue="zytjjg">
+            		 ppd.htkey LIKE '%'|| 'zytjjg,' ||'%' 
+            	</isEqual>
+            	<isNotEqual property="hosptType" compareValue="zytjjg">
+            		 (REPLACE(REPLACE(ppd.htkey, 'zytjjg', ''),',','')) is not null
+            	</isNotEqual>
+          	</isNotEmpty>
+          	<isNotEmpty prepend=" AND " property="prodType"> 
+				ppd.ptkey LIKE '%'||#prodType# || ',' ||'%'
+			</isNotEmpty>
+		<include refid="BaseMap.oraPageSqlSuffix2"/>
+	</select>
+	
+	
+	 <!-- 根据条件获取体检卡查总数 -->  
+    <select id="findCardListCount" resultClass="int" parameterClass="java.util.HashMap">
+       	SELECT count(1) from (
+			SELECT phd.pid,phd.shop_price,wm_concat(phd.htkey || ',') htkey,wm_concat(spt.key || ',') ptkey from (
+			
+			SELECT sp.pid,sp.shop_price,tcs.key htkey from S_PRODUCT sp
+			INNER JOIN S_PRODUCT_ENTITY spe on spe.pid=sp.pid
+			INNER JOIN T_CAR_SERVICES tcs on tcs.csid=spe.csid
+			INNER JOIN t_hospital_entity the ON the.esid = spe.esid
+			where sp.status=2 and sp.pscope in (2,3) and the.city=#city#
+			GROUP BY sp.pid,sp.shop_price,tcs.key
+			
+			) phd 
+			INNER JOIN S_PRODUCT_TYPE spt on spt.pid=phd.pid
+			GROUP BY phd.pid,phd.shop_price
+			) ppd
+			where 1=1
+			<isNotEmpty prepend=" AND " property="hosptType">  
+            	<isEqual property="hosptType" compareValue="zytjjg">
+            		 ppd.htkey LIKE '%'|| 'zytjjg,' ||'%' 
+            	</isEqual>
+            	<isNotEqual property="hosptType" compareValue="zytjjg">
+            		 (REPLACE(REPLACE(ppd.htkey, 'zytjjg', ''),',','')) is not null
+            	</isNotEqual>
+          	</isNotEmpty>
+          	<isNotEmpty prepend=" AND " property="prodType"> 
+				ppd.ptkey LIKE '%'||#prodType# || ',' ||'%'
+			</isNotEmpty>
+    </select>
+    
+	<select id="getProductTypeList" resultClass="java.util.HashMap">
+	   SELECT  spt.key,spt2.name,spt.category from S_PRODUCT sp
+		LEFT JOIN S_PRODUCT_TYPE spt on spt.pid=sp.pid
+		LEFT JOIN S_PRODUCTTYPE spt2 on spt2.key=spt.key
+		where sp.status=2 and sp.pscope in (2,3)
+		GROUP BY spt.key,spt2.name,spt.category
+		ORDER BY spt.category
+	</select>
+
+</sqlMap>
+
+
+

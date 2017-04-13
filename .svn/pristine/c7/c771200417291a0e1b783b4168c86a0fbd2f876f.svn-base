@@ -1,0 +1,10 @@
+package com.sgfm.datacenter.dao.user;
+
+import org.springframework.stereotype.Repository;
+
+import com.sgfm.base.dao.BaseDao;
+
+@Repository
+public class UserDao extends BaseDao{
+
+}

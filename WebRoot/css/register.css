@@ -1,0 +1,28 @@
+.regconxiangbox{padding:0.5rem 0.625rem 0;}
+.regconxiang1{position:relative;overflow:hidden; }
+.regconxiang1 .inputk1{-webkit-appearance:none;background:#fff url(../images/sjh.png) no-repeat 0.75rem center;background-size: 0.9rem auto; height:1.95rem; display:inline-block; width:100%; padding:0 0 0 2.2rem; box-sizing:border-box; outline:none; font-size:0.6rem; color:#999;border: 1px #dddddd solid;border-radius: 5px 5px 0 0; border-width: 0 0 1px 0;}
+.regconxiang1 .inputk2{-webkit-appearance:none;background:#fff url(../images/mm.png) no-repeat 0.75rem center;background-size: 0.9rem auto;border-radius:0;height:1.95rem; display:inline-block; width:100%; padding:0 0 0 2.2rem; box-sizing:border-box; outline:none; font-size:0.6rem; color:#999;border: 1px #dddddd solid; border-width: 0 0 1px 0;}
+.regconxiang1 .inputk3{-webkit-appearance:none;background:#fff url(../images/mm.png) no-repeat 0.75rem center;background-size: 0.9rem auto;height:1.95rem; display:inline-block; width:100%; padding:0 0 0 2.2rem; box-sizing:border-box; outline:none; font-size:0.6rem; color:#999;border-radius: 0 0 5px 5px; border:none;}
+.regconxiang1 .inputk4{-webkit-appearance:none;background:#fff url(../images/yzm.png) no-repeat 0.75rem center;background-size: 0.9rem auto;margin-top:0.625rem;border-radius: 5px 0 0 5px;width:13.69rem; height:1.95rem; display:inline-block; padding:0 0 0 2.2rem; box-sizing:border-box; outline:none; font-size:0.6rem; color:#999; border:none;}
+.regconxiang1 .yzmimg{width: 4.8rem;color: #fff; height:1.95rem; font-size:0.65rem;line-height:1.95rem; display:inline-block; position:absolute; top:0.625rem; right:0px; text-align:center; border-radius:0 5px 5px 0; overflow:hidden;background: #1aa9b9;}
+
+
+.reg_xieyi2{margin:0.625rem 0.75rem 1.75rem; clear:both; overflow:hidden;}
+.reg_xieyi2 a{color:#1aa9b9; font-size:0.65rem;}
+.reg_an2{clear:both; overflow:hidden;}
+.reg_an2 a{height:2.5rem;width:100%; background:#e25d39; display:block; text-align:center; font-size:0.75rem; color:#fff; line-height:2.5rem; border-radius:5px;}
+.reg_an2 a.login{background:#5ac0cb; border:2px #aaccd0 solid;}
+
+.fix_reg_xieyi{width:100%; height:100%; position:fixed; top:0; left:0; background:url(../images/hstmbg.png) 0 0 repeat; z-index:9999; display:none;}
+.fix_reg_xieyi .xieyidiv{margin:0.5rem; height:86%; padding:2.25rem 0.5rem 0.375rem; background:#fff; border-radius:5px; overflow:hidden; position:relative;}
+.fix_reg_xieyi .xieyidiv .conxieyi{width:100%; height:100%; padding:0 1.0rem 0 0; overflow:hidden; overflow-y:auto; font-size:1em; line-height:1.8em; color:#333;}
+.fix_reg_xieyi .xieyidiv .fixxieyitit{width:100%; height:2.0rem; position:absolute; top:5px; right:0px; z-index:9999; background:#fff;}
+.fix_reg_xieyi .xieyidiv .fixxieyitit h2{text-align:center; font-size:0.8rem; height:1.65rem; line-height:1.5rem; border-bottom:1px #ccc solid; margin:0 0 5px 0;}
+.fix_reg_xieyi .xieyidiv .fixxieyitit .guanbifixxy{width:1.5rem; height:1.5rem; position:absolute; top:0px; right:2px; background:url(../images/close.png) center center no-repeat; background-size:0.8rem auto; z-index:9999;}
+
+
+.loginwjmm2{text-align:center; font-size:0.65rem;margin-top: 1rem;}
+.loginwjmm2 a{color:#666;text-decoration: underline;}
+
+.login_acc2{ border-radius: 0; -webkit-appearance: none; height: 1rem;  width: 57.7%; border: 1px solid #dddddd; font-family: arial; color: #716f6f; font-size: 0.6rem; padding:0.4rem 2% 0.4rem; border-width: 1px 0 1px 1px; display: block; float: left;  box-sizing: content-box;border-left: 0;}
+.get_ver{ color: #fff; background: #1aa9b9; cursor: pointer; width: 38%; line-height: 1.88rem; height: 1.88rem; border: 1px solid #1aa9b9; text-align: center; float: left;}

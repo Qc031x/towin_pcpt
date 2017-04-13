@@ -1,0 +1,11 @@
+
+request.url.no.intercept=/core/shop.toEntityShopListPage.do;/core/product.toProductListPage.do;/core/shop.setLocationPoint.do;/core/shop.ajaxMedLoadMore.do;/core/product.findConditionsDataList.do;/core/product.ajaxProductLoadMore.do;/core/product.toProductDetail.do;/core/product.findAllMedicalByPid.do;/core/product.findMedicalList.do;/core/order.addRsToCookie.do;/core/order.toRsConfirm.do;/core/order.addCardToCookie.do;/core/shop.toBranchDetails.do;/core/shop.findMECtaocan.do;/core/product.getRiDataByEsid.do;/content/user.register.do;/core/user.doRegister.do;/core/user.findRegisterByAccount.do;
+
+pageSize =16
+
+uploadFilePath=http\://192.168.1.130\:8321
+
+yk.payType=T
+ykMall.url =http\://121.40.59.15\:8083/
+
+cacheLoaded =false

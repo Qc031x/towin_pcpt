@@ -1,0 +1,107 @@
+package com.sgfm.datacenter.entity;
+
+import java.io.Serializable;
+import javax.persistence.*;
+import java.math.BigDecimal;
+
+
+/**
+ * The persistent class for the S_ORDER database table.
+ * 
+ */
+@Entity
+@Table(name="S_ORDER")
+@NamedQuery(name="SOrder.findAll", query="SELECT s FROM SOrder s")
+public class SOrder implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private String oid;
+
+	@Column(name="F_WHERE")
+	private String fWhere;
+
+	private String ip;
+
+	@Column(name="IS_VALID")
+	private BigDecimal isValid;
+
+	private BigDecimal mid;
+
+	@Column(name="PAY_ID")
+	private String payId;
+
+	@Column(name="POST_DATE")
+	private String postDate;
+
+	@Column(name="SUM_PRICE")
+	private BigDecimal sumPrice;
+
+	public SOrder() {
+	}
+
+	public String getOid() {
+		return this.oid;
+	}
+
+	public void setOid(String oid) {
+		this.oid = oid;
+	}
+
+	public String getFWhere() {
+		return this.fWhere;
+	}
+
+	public void setFWhere(String fWhere) {
+		this.fWhere = fWhere;
+	}
+
+	public String getIp() {
+		return this.ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public BigDecimal getIsValid() {
+		return this.isValid;
+	}
+
+	public void setIsValid(BigDecimal isValid) {
+		this.isValid = isValid;
+	}
+
+	public BigDecimal getMid() {
+		return this.mid;
+	}
+
+	public void setMid(BigDecimal mid) {
+		this.mid = mid;
+	}
+
+	public String getPayId() {
+		return this.payId;
+	}
+
+	public void setPayId(String payId) {
+		this.payId = payId;
+	}
+
+	public String getPostDate() {
+		return this.postDate;
+	}
+
+	public void setPostDate(String postDate) {
+		this.postDate = postDate;
+	}
+
+	public BigDecimal getSumPrice() {
+		return this.sumPrice;
+	}
+
+	public void setSumPrice(BigDecimal sumPrice) {
+		this.sumPrice = sumPrice;
+	}
+
+}

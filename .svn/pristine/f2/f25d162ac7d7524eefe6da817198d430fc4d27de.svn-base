@@ -1,0 +1,313 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+<%@include file="/WEB-INF/content/public/tags.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>机构详情页</title>
+    
+    <link rel="stylesheet" href="/css/public.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/jigoushow1.css">
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    
+	<script type="text/javascript" src="/js/commonLib.js"></script>
+</head>
+<body>
+	<div class="header">
+        <div class="header_left">
+            <a href="javascript:history.go(-1)">返回</a>
+        </div>
+        <div class="header_info">机构详情页</div>
+        <div class="header_right" onclick="changeMenu()">
+            <div class="header_rbg"></div>
+               <span>导航</span>
+        </div>
+    </div>
+    <%@include file="/WEB-INF/content/public/top_menu.jsp" %>
+
+<div class="agencydet">
+<input id="esid" type="hidden" value="${info.mecinfo.ESID}"> 
+    <a href="javascript:void(0);">
+    	<img src="${ctxImg}/shop/${info.mecinfo['CSID']}/${info.mecinfo['ESID']}/${info.mecinfo['IMG']}" onerror="this.src='/images/default_img.png'">
+        
+        <div class="content">
+            <p class="hosname">${info.mecinfo['ENAME']}</p>
+            <p id="showMap">
+            	<input type="hidden" id="lat" value="${info.mecinfo['LAT']}">
+            	<input type="hidden" id="lng" value="${info.mecinfo['LGT']}">
+            	<c:if test="${!empty info.mecinfo.TYPENAME}">
+            	<span class="hostype">
+					<span>[${info.mecinfo.TYPENAME}]</span>          	
+				</span>
+            	</c:if>
+            	<span class="distance"><b>${info.mecinfo['DISTANCE']}</b>km</span>
+            	<span class="hosadss">${info.mecinfo['COUNTYNAME']}</span>
+            </p>
+        </div>
+    </a>
+</div>
+<div class="interval"></div>
+<div class="clear"></div>
+
+
+<div class="agencyinfo">
+    <p><span>机构地址：</span><span class="addinfo" id="address"> ${info.mecinfo['CITYNAME']}${info.mecinfo['COUNTYNAME']}${info.mecinfo['ADDRESS']}</span></p>
+    <p><span>营业时间：</span><span class="addinfo">${info.mecinfo['CHECKUP_TIME']}</span></p>
+    <p><span>休息时间：</span><span class="addinfo">${info.mecinfo['REST_TIME']}</span></p>
+    <p><span>服务电话：</span><span class="addinfo">${info.mecinfo['TEL']}</span></p>
+</div>
+<div class="interval"></div>
+<div class="clear"></div>
+
+
+<div class="calender">
+    <h3>最近可约日期:</h3>
+    <p id="lately"></p>
+    <i></i>
+</div>
+
+<div class="yuyue_rili">
+    <div class="yue_tit">
+        <div class="riliqiean1"></div>
+        <div class="riliyear"><span class="xlxzrili" id="xlyear">2016</span> 年 <span class="xlxzrili" id="xlmonth">8</span> 月</div>
+        <div class="riliqiean2"></div>
+    </div>
+    <ul class="fixxingqi">
+        <li>星期日</li>
+        <li>星期一</li>
+        <li>星期二</li>
+        <li>星期三</li>
+        <li>星期四</li>
+        <li>星期五</li>
+        <li>星期六</li>
+    </ul>
+    <div class="yue_rili">
+        <ul class="yue_day"></ul>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="fixdiv"></div>
+<c:if test="${not empty info['productTypeList']}">
+<div class="screen">
+    <div class="screenlist">
+        <ul>
+            <li class="active">全部</li>
+            <c:forEach items="${info['productTypeList']}" var="mapItem" >
+           		<li id="lb${mapItem['KEY']}" tjz="${mapItem['KEY']}">${mapItem['NAME']}</li>
+        	</c:forEach>
+        </ul>
+    </div>
+</div>
+</c:if>
+
+<div class="prolist" id="prolist">
+    <ul>
+    </ul>
+    <div class="pagebtn">
+        <a id="prevpage" class="pagecla nobtn">上一页</a>
+        <span id="indexpage">1</span> / <span id="allpage">5</span>
+        <a id="nextpage" class="pagecla">下一页</a>
+    </div>
+</div>
+
+    <%@include file="/WEB-INF/content/public/footer.jsp" %>
+
+
+</body>
+<script type="text/javascript" src="/js/rem.js"></script>
+<script type="text/javascript" src="/js/idangerous.js"></script>
+<script type="text/javascript" src="/js/commonLib.js"></script>
+<script type="text/javascript" src="/js/calendar.js"></script>
+<script>
+    /*日历插件*/
+    $(document).ready(function () {
+        $(".header_right").click(function(){
+            $(this).children().toggleClass("rbgchange");
+            $(".linklist").slideToggle(200).css("position","fixed");
+        });
+
+        jiazhairili();
+        checkPageButton();
+        loadTaocan(1);
+    });
+    categoryidOne = '';
+    function loadTaocan(pageNo){ 
+    	var url = "/core/shop.findMECtaocan.do";
+    	var data = {"cgVariable.esid":"${info.mecinfo['ESID']}","cgVariable.categoryidOne":categoryidOne,"page":pageNo};
+    	$.getMyJSON(url, data, function(data){
+    		if(data.data[0].pages.totalPages>1){
+      	$("#indexpage").html(data.data[0].pages.pageNo);
+      	$("#allpage").html(data.data[0].pages.totalPages);
+          checkPageButton();
+    			$(".pagebtn").show();
+    		} else {
+    			$(".pagebtn").hide();
+    		}
+    		$("#prolist ul").html('');
+    		for ( var i in data.data[0].pages.list) {
+    			var info = data.data[0].pages.list[i];
+            	var url = "/core/product.toProductDetail.do?cgVariable.pid="+info.PID;
+            	var html = "";
+            		html +="<li>";
+            		html +="<a href='"+url+"'>";
+            		html +="<img src='${ctxImg}/product/"+info.CSID+"/"+info.IMG+"' onerror=this.src="+'"/images/default_img.png"'+">";
+            		html +="<div class='proinfo'>";
+            		html +="<p>";
+            		html +=info.PNAME;
+   					if(info.SEX=='1') html += "(男)";
+   					if(info.SEX=='2') html += "(已婚女)";
+   					if(info.SEX=='4') html += "(未婚女)";
+            		html +="</p>";
+            		html +="<p>";
+            		html +="<b>￥"+info.SHOP_PRICE+"</b>";
+            		html +="<em>￥"+info.MARKET_PRICE+"</em>";
+            		html +="<span class='order'>预约</span>";
+            		html +="</p>";
+            		html +="<p class='sold'>已售<span>"+info.COUNT+"</span></p>";
+            		html +="</div>";
+            		html +="</a>";
+            		html +="</li>";
+            	$("#prolist ul").append(html);
+}
+    	});
+    }
+    
+</script>
+<script>
+    /*日历下拉*/
+    $(".calender").click(function () {
+        var calBox = $(".yuyue_rili");
+        $(".calender i").toggleClass("active");
+        if (!calBox.is(":visible")) {
+            calBox.slideDown();
+        } else {
+            calBox.slideUp();
+        }
+    });
+
+
+    $(".prolist ul:eq(0)").show();
+    $(".screenlist ul li").click(function(){
+        $(this).addClass('active').siblings("li").removeClass('active');
+        var index = $(this).index();
+        $(".prolist ul").eq(index).show().siblings("ul").hide();
+        categoryidOne = $(this).attr("tjz");
+        loadTaocan(1);
+    });
+
+    /*分页*/
+    function checkPageButton(){
+	    var num = parseInt($("#indexpage").html());
+	    var page = parseInt($("#allpage").html());
+        if(num == 1){
+            $("#prevpage").addClass("nobtn");
+        } else {
+            $("#prevpage").removeClass("nobtn");
+        }
+        if(num == page){
+            $("#nextpage").addClass("nobtn");
+        } else {
+            $("#nextpage").removeClass("nobtn");
+        }
+        if(page == 1)
+        	$("#nextpage").addClass("nobtn");
+    }
+    $("#prevpage").click(function () {
+	    var num = parseInt($("#indexpage").html());
+	    var page = parseInt($("#allpage").html());
+        if (num > 1) {
+            num--;
+            $("#indexpage").html(num);
+            loadTaocan(num);
+        }
+        checkPageButton();
+    });
+    $("#nextpage").click(function () {
+	    var num = parseInt($("#indexpage").html());
+	    var page = parseInt($("#allpage").html());
+        if (num < page) {
+            num++;
+            $("#indexpage").html(num);
+            loadTaocan(num);
+        }
+        checkPageButton();
+    });
+
+    /*筛选悬浮*/
+    $(window).scroll(function () {
+    	var fixdiv = $(".fixdiv").offset().top;
+        if ($(window).scrollTop() >= fixdiv) {
+            $(".screen").css({
+                top: "2.5rem",
+                position: "fixed",
+                "z-index": "100"
+            });
+
+        } else {
+            $(".screen").css({
+                "position": "",
+                "top": ""
+            });
+        }
+    });
+
+
+    /*筛选滑动*/
+    var $screenlist = $(".screenlist");
+    var $ul = $(".screenlist ul"), startX, startY, translateX = 0, nowtranslateX = 0;
+    function touchStart(event) {
+        //event.preventDefault();
+        var touch = event.originalEvent.targetTouches[0];
+        startX = touch.pageX;
+        startY = touch.pageY;
+        $ul.css("webkitTransition", "none");
+    }
+    function touchMove(event) {
+        event.preventDefault();
+        var touch = event.originalEvent.targetTouches[0],
+                x = touch.pageX - startX,
+                y = touch.pageY - startY;
+        nowtranslateX = x + translateX;
+        $ul[0].style.webkitTransform = 'translate(' + nowtranslateX + 'px,0)';
+    }
+    function touchEnd() {
+        translateX = nowtranslateX;
+        if (nowtranslateX >= 0) {
+            $ul.css("transform", "translate(0px,0px)");
+            translateX = 0;
+            $ul.css("webkitTransition", "transform 500ms");
+        } else {
+            var $cwidth = $screenlist.innerWidth() - $ul.outerWidth();
+            if (nowtranslateX < $cwidth) {
+                $ul.css("webkitTransition", "transform 500ms");
+                $ul.css("transform", "translate(" + $cwidth + "px,0px)");
+                translateX = $cwidth;
+            }
+        }
+    }
+    if ($(".screenlist").width() < $(".screenlist ul").innerWidth()) {//判断内容是否溢出，溢出绑定事件
+        $(".screenlist").on("touchstart", "ul", function (event) {
+            touchStart(event);
+        });
+        $(".screenlist").on("touchmove", "ul", function (event) {
+            touchMove(event);
+        });
+        $(".screenlist").on("touchend", "ul", function (event) {
+            touchEnd(event);
+        });
+        var $activeleft = $(".screenlist li.active").position().left + $(".screenlist li.active").outerWidth();
+        if ($activeleft > $(".chooselist").innerWidth()) {
+            translateX = $(".chooselist").innerWidth();
+            $ul.css("transform", "translate(" + translateX + "px,0)");
+        }
+    }
+</script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&libraries=convertor"></script>
+<script type="text/javascript" src="/js/wxMap.js"></script>
+</html>

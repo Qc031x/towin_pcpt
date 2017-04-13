@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="commonMap">
+	<select id="getAllProductRatios" resultClass="java.util.HashMap">
+		select td.*,tpd.* from t_distribution td,s_product_distribution tpd where td.did = tpd.did and td.distributiontype = 7 and td.distributionname is not null order by to_number(td.distributionname) asc 
+	</select>
+	
+</sqlMap>

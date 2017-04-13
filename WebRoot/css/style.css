@@ -1,0 +1,76 @@
+@charset "utf-8";
+*{margin:0;padding:0;word-wrap:break-word;word-break:break-all;-webkit-tap-highlight-color:rgba(255,0,0,0);}
+body{font:12px "Microsoft YaHei", arial, sans-serif,'DejaVu Sans','Lucida Grande',Tahoma,'Hiragino Sans GB',STHeiti,SimSun,sans-serif;color:#333;}
+html, body, h1, h2, h3, h4,input,div,ul,li,p,form,table,dt,dl,dd,tr{list-style-type:none;}
+table,table,table,table tr,table tr td{border-color:#E5E5E5; border-collapse:collapse;}
+h3,h4{ font-size:14px; font-weight:bold;}
+a{color:#333;text-decoration:none; cursor:pointer;} a:hover{color:#00AFC7;} a img{border:none; width:260px; height:158px;}
+table tbody>tr td.tableleft {text-align: center;vertical-align:middle; background-color: #f7f7f7;}
+em{font-style:normal;font-weight:normal; font-size: 14px;}
+i{font-style: normal;}
+.clearfix{clear:both; overflow:hidden;}
+.clear{clear:both; width:0; height:0; line-height:0; overflow:hidden;}
+.show{ display:block;visibility:visible;}  .hide{ display:none; visibility:hidden;}
+.fl{float:left;}  .fr{float:right;}
+.main{width:1180px; margin:0 auto; clear:both;}.username:hover{color:#fff;}
+.mt10{margin-top:10px;} .pt10{padding-top:10px;} .mt20{margin-top:20px;} .pt20{padding-top:20px;}
+
+input[type=text]{display:inline-block;padding:0;margin-bottom:0;font-size:14px;color:#666;height:30px;vertical-align:middle;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none}
+input[type='text']:focus {border: 1px solid #3399ff; -webkit-box-shadow: none;-moz-box-shadow:none;box-shadow:none;}
+input { box-shadow: none; -webkit-box-shadow: none; outline: none; font-family: Arial, "Microsoft Yahei";-moz-appearance: none; -o-appearance: none; appearance: none;}
+select{ font-family: Arial, "Microsoft Yahei"; box-shadow: none; -webkit-box-shadow: none;-moz-appearance: none; -o-appearance: none; appearance: none;}
+
+.hds {/* width: 90%; */height: 60px;line-height: 60px;text-align: center;background: #f7f7f7;font-size: 20px;color: #00AFC7;  }
+
+a:focus{outline: none;}
+a:hover{text-decoration: none;}
+a:link{text-decoration: none;}
+ul li{padding: 0;margin: 0;list-style-type: none;}
+ul,ol{margin: 0;}
+
+.top{position:fixed;z-index:100;width:100%;height:60px;background:#00b0ea;color:#fff}
+.left{float:left;margin-left:30px;height:100%;font-size:20px}
+.left img{margin-right:10px;height:51px}
+.left .wel{display:inline-block;margin-left:28px}
+.left .wel,.right{height:100%;font-size:14px;line-height:60px}
+.right{float:right;margin-right:30px}
+.right img{margin-right:10px;width:20px;height:22px;vertical-align:middle}
+.page-container{padding-top:60px;width:100%}
+.page-sidebar{position:relative;float:left;padding-top:20px;width:270px;height:100%}
+.collapse.nav-collapse{height:669px;border-right:1px solid #e3e3e3;border-bottom:1px solid #e3e3e3}
+.page-sidebar img{margin:-4px 0 0 30px;width:23px;height:19px}
+.page-sidebar .home img{width:20px;height:18px}
+.page-sidebar .set img,.page-sidebar .userset img{width:20px;height:20px}
+.sideblk{position:relative;display:inline-block;width:265px;height:40px;border-left:4px solid #fff;color:#333;line-height:40px}
+.sideblk .arrowicon img{position:absolute;top:1pc;right:20px;width:9pt;height:8px}
+.sideblk .title{display:inline-block;margin-left:20px;color:#333}
+.sub-menu li{display:inline-block;padding-left:72px;width:194px;height:40px;border-left:4px solid #fff;color:#666;line-height:40px}
+.sideblk.titactive,.sub-menu li.titactive{border-left:4px solid #00afc7;background:#f7f7f7}
+.sub-menu li a:hover{color:#00afc7!important}
+.sub-menu li a,.sub-menu li span{display:inline-block}
+.sub-menu li span{float:right;margin:0 15px 0 0;color:#ffa532}
+.subMenuLiActive{border-left:4px solid #00afc7!important;background:#f7f7f7!important}
+.sub-menu{display:none}
+.subactive{display:block}
+.pagination ul>li>a,.pagination ul>li>span{display:inline-block;margin:0 5px 0 0;padding:0;width:24px;height:24px;border:1px solid #f0f0f0;border-radius:4px;color:#666;vertical-align:middle;text-align:center;line-height:24px}
+.pageBlank{width:100%;height:30px}
+.tcdPageCode .abre,.tcdPageCode .more{margin:0 5px 0 0;width:24px;height:24px;border:1px solid #f0f0f0;border-radius:4px;color:#666;vertical-align:middle;text-align:center;font-size:9pt;line-height:1pc}
+.tcdPageCode a{border-radius:4px;vertical-align:middle}
+.tcdPageCode a,.tcdPageCode span{display:inline-block}
+.pagination ul>li>a:hover{width:24px;height:24px;border:1px solid #f0f0f0;background:#f7fdff;text-decoration:none}
+.paginList{margin-top:35px;width:100%;height:24px;text-align:center}
+.pagination ul{display:inline-block;margin-bottom:0;margin-left:0;box-shadow:none}
+.pagination ul>li>span:hover{width:24px;height:24px;border:1px solid #f0f0f0;background:#f7fdff;color:#666;text-decoration:none}
+a.page-index.cur{border-radius:4px}
+a.page-index.cur,a.page-index.cur:hover{display:inline-block;margin:0 5px 0 0;padding:0;width:24px;height:24px;background-color:#00afc7;color:#fff;vertical-align:middle;text-align:center;line-height:24px}
+a.page-index.cur:hover{border:1px solid #999;border-radius:4px}
+.pagination ul>li>a.prev{padding:0;width:24px;height:24px;background:#fff url(../images/pageleft.png) no-repeat center center}
+.pagination ul>li>a.next{padding:0;width:24px;height:24px;background:#fff url(../images/pageright.png) no-repeat center center}
+.pagination ul>li>a.disabledprev{padding:0;width:24px;height:24px;background:#fff url(../images/disableleft.png) no-repeat center center}
+.pagination ul>li>a.disablednext{padding:0;width:24px;height:24px;background:#fff url(../images/disableright.png) no-repeat center center}
+.pagination ul>li>a.firstPage,.pagination ul>li>a.lastPage{display:inline-block;margin:0 5px 0 0;padding:0;width:3pc;height:24px;border:1px solid #f0f0f0;border-radius:4px;color:#666;vertical-align:middle;text-align:center;line-height:24px}
+
+.ykfooter{clear: both;padding:0 25% 40px;text-align: center;margin-top: 40px;font-size: 14px;color: #999;}
+.ykfooter a{text-decoration: none;color: #999999;}
+.ykfooter .vertical{display: inline-block;margin:0 15px;}
+.ykfooter .ykcompely{display: inline-block;margin-right:15px;}

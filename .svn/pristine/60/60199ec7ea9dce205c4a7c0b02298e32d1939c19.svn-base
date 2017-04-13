@@ -1,0 +1,212 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>会员注册</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="stylesheet" href="/css/register.css" />
+<%@include file="../public/head.jsp"%>
+<%@include file="../public/sgfm.jsp"%>
+<script type="text/javascript" src="/js/placeHolderTips.js"></script>
+</head>
+<body style="background: #F5F5F5;">
+	<div class="regconxiangbox">
+		<form id="registerForm" method="post">
+			<div class="regconxiang1">
+				<input name="tMember.account" class="inputk1" type="text" tips="用户名" ajaxurl="${ctx}/core/user.findRegisterByAccount.do" datatype="*6-16" nullmsg="请输入用户名!" errormsg="用户名为字母、数字或符号组成的6位以上字符！" />
+			</div>
+			<div class="regconxiang1">
+				<input name="tMember.password" class="inputk2" type="password" tips="密码" datatype="*6-16" nullmsg="请输入密码" errormsg="密码长度不能少于6位，且不多于16位！" />
+			</div>
+			<div class="regconxiang1">
+				<input class="inputk2" type="password" tips="确认密码"  />
+			</div>
+			<div class="regconxiang1">
+				<input class="inputk3" type="text" name="tMember.mobile" tips="手机号码" datatype="b" nullmsg="请输入手机号码!" errormsg="手机号码填写错误！" />
+			</div>
+			<div class="regconxiang1">
+				<input name="captchas" class="inputk4" type="text" tips="验证码" datatype="*" nullmsg="请输入验证码!" maxlength="4" />
+				<a class="yzmimg" href="javascript:void(0)">
+					<img style='width: 100%; height: 100%' src="${ctx}/loginLicence" alt="验证码" id="authCode" onclick="changeImg()" />
+				</a>
+			</div>
+
+		
+			<div class="reg_xieyi2">
+				<%--<a id="tanyieyi" href="javascript:void(0);" style="color: #1aa9b9;">《用户注册协议》</a> --%>
+			</div>
+			<div class="reg_an2">
+				<a onclick="javascript:void(0);" id='doRegister'>同意协议并注册</a>
+			</div>
+			<div class="loginwjmm2">
+				<a href="${ctx}/core/user.login.do">已有账号，立即登录</a>
+			</div>
+		</form>
+
+		<%--
+		<div class="fix_reg_xieyi">
+			<div class="xieyidiv">
+				<div class="fixxieyitit">
+					<h2>注册协议</h2>
+					<span class="guanbifixxy"></span>
+				</div>
+				<div class="conxieyi">
+					<p>敬的客户，欢迎您注册成为本网站用户。在注册前请您仔细阅读如下服务条款：</p>
+					<p>协议细则</p>
+					<p>1、本网站服务条款的确认和接纳</p>
+					<p>本网站各项服务的所有权和运作权归本网站拥有。</p>
+					<p>
+						<br />
+					</p>
+					<p>2、用户必须：</p>
+					<p>(1)自行配备上网的所需设备， 包括个人电脑、调制解调器或其他必备上网装置。</p>
+					<p>(2)自行负担个人上网所支付的与此服务有关的电话费用、 网络费用。</p>
+					<p>
+						<br />
+					</p>
+					<p>3、用户在本网站交易平台上不得发布下列违法信息：</p>
+					<p>(1)反对宪法所确定的基本原则的；</p>
+					<p>(2)危害国家安全，泄露国家秘密，颠覆国家政权，破坏国家统一的；</p>
+					<p>(3)损害国家荣誉和利益的；</p>
+					<p>(4)煽动民族仇恨、民族歧视，破坏民族团结的；</p>
+					<p>(5)破坏国家宗教政策，宣扬邪教和封建迷信的；</p>
+					<p>(6)散布谣言，扰乱社会秩序，破坏社会稳定的；</p>
+					<p>(7)散布淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的；</p>
+					<p>(8)侮辱或者诽谤他人，侵害他人合法权益的；</p>
+					<p>(9)含有法律、行政法规禁止的其他内容的。</p>
+					<p>
+						<br />
+					</p>
+					<p>4、有关个人资料</p>
+					<p>用户同意：</p>
+					<p>(1) 提供及时、详尽及准确的个人资料。</p>
+					<p>(2).同意接收来自本网站的信息。</p>
+					<p>(3) 不断更新注册资料，符合及时、详尽准确的要求。所有原始键入的资料将引用为注册资料。</p>
+					<p>
+						<br />
+					</p>
+					<p>5、电子邮件</p>
+					<p>用户在注册时应当选择稳定性及安全性相对较好的电子邮箱，并且同意接受并阅读本网站发往用户的各类电子邮件。如用户未及时从自己的电子邮箱接受电子邮件或因用户电子邮箱或用户电子邮件接收及阅读程序本身的问题使电子邮件无法正常接收或阅读的，只要本网站成功发送了电子邮件，应当视为用户已经接收到相关的电子邮件。电子邮件在发信服务器上所记录的发出时间视为送达时间。</p>
+					<p>
+						<br />
+					</p>
+					<p>6、服务条款的修改</p>
+					<p>本网站有权在必要时修改服务条款，本网站服务条款一旦发生变动，将会在重要页面上提示修改内容。如果不同意所改动的内容，用户可以主动取消获得的本网站信息服务。如果用户继续享用本网站信息服务，则视为接受服务条款的变动。本网站保留随时修改或中断服务而不需通知用户的权利。本网站行使修改或中断服务的权利，不需对用户或第三方负责。</p>
+					<p>
+						<br />
+					</p>
+					<p>7、用户的帐号、密码和安全性</p>
+					<p>你一旦注册成功成为用户，你将得到一个密码和帐号。如果你不保管好自己的帐号和密码安全，将负全部责任。另外，每个用户都要对其帐户中的所有活动和事件负全责。你可随时根据指示改变你的密码，也可以结束旧的帐户重开一个新帐户。用户同意若发现任何非法使用用户帐号或安全漏洞的情况，请立即通知本网站。</p>
+					<p>
+						<br />
+					</p>
+					<p>8、拒绝提供担保</p>
+					<p>用户明确同意信息服务的使用由用户个人承担风险。本网站不担保服务不会受中断，对服务的及时性，安全性，出错发生都不作担保，但会在能力范围内，避免出错。</p>
+					<p>
+						<br />
+					</p>
+					<p>9、有限责任</p>
+					<p>本网站对任何直接、间接、偶然、特殊及继起的损害不负责任，这些损害来自：不正当使用本网站服务，或用户传送的信息不符合规定等。这些行为都有可能导致本网站形象受损，所以本网站事先提出这种损害的可能性，同时会尽量避免这种损害的发生。</p>
+					<p>
+						<br />
+					</p>
+					<p>10、信息的储存及限制</p>
+					<p>本网站有判定用户的行为是否符合本网站服务条款的要求和精神的权利，如果用户违背本网站服务条款的规定，本网站有权中断其服务的帐号。</p>
+					<p>
+						<br />
+					</p>
+					<p>11、用户管理</p>
+					<p>用户必须遵循：</p>
+					<p>(1) 使用信息服务不作非法用途。</p>
+					<p>(2) 不干扰或混乱网络服务。</p>
+					<p>(3) 遵守所有使用服务的网络协议、规定、程序和惯例。用户的行为准则是以因特网法规，政策、程序和惯例为根据的。</p>
+					<p>
+						<br />
+					</p>
+					<p>12、保障</p>
+					<p>用户同意保障和维护本网站全体成员的利益，负责支付由用户使用超出服务范围引起的律师费用，违反服务条款的损害补偿费用，其它人使用用户的电脑、帐号和其它知识产权的追索费。</p>
+					<p>
+						<br />
+					</p>
+					<p>13、结束服务</p>
+					<p>用户或本网站可随时根据实际情况中断一项或多项服务。本网站不需对任何个人或第三方负责而随时中断服务。用户若反对任何服务条款的建议或对后来的条款修改有异议，或对本网站服务不满，用户可以行使如下权利：</p>
+					<p>(1) 不再使用本网站信息服务。</p>
+					<p>(2) 通知本网站停止对该用户的服务。</p>
+					<p>结束用户服务后，用户使用本网站服务的权利马上中止。从那时起，用户没有权利，本网站也没有义务传送任何未处理的信息或未完成的服务给用户或第三方。</p>
+					<p>
+						<br />
+					</p>
+					<p>14、通告</p>
+					<p>所有发给用户的通告都可通过重要页面的公告或电子邮件或常规的信件传送。服务条款的修改、服务变更、或其它重要事件的通告都会以此形式进行。</p>
+					<p>
+						<br />
+					</p>
+					<p>15、信息内容的所有权</p>
+					<p>本网站定义的信息内容包括：文字、软件、声音、相片、录象、图表；在广告中全部内容；本网站为用户提供的其它信息。所有这些内容受版权、商标、标签和其它财产所有权法律的保护。所以，用户只能在本网站和广告商授权下才能使用这些内容，而不能擅自复制、再造这些内容、或创造与内容有关的派生产品。</p>
+					<p>
+						<br />
+					</p>
+					<p>16、法律</p>
+					<p>本网站信息服务条款要与中华人民共和国的法律解释一致。用户和本网站一致同意服从本网站所在地有管辖权的法院管辖。</p>
+				</div>
+			</div>
+		</div>
+		--%>
+		<div class="botzhanwei" id="pro_con1"></div>
+		<div class="huitop"></div>
+	</div>
+	
+	<script>
+		/**
+		 * 点击刷新验证码
+		 */
+		function changeImg() {
+			$("#authCode").attr("src", "${ctx}/loginLicence?t=" + randomChar(6));
+			$("#captchas").val("");
+		}
+		/**
+		 *  产生随机数
+		 */
+		function randomChar(l) {
+			var x = "123456789poiuytrewqasdfghjklmnbvcxzQWERTYUIPLKJHGFDSAZXCVBNM";
+			var tmp = "";
+			for (var i = 0; i < l; i++) {
+				tmp += x.charAt(Math.ceil(Math.random() * 100000000) % x.length);
+			}
+			return tmp;
+		}
+		
+		$(document).ready(function(){
+
+			$("#tanyieyi").click(function(){$(".fix_reg_xieyi").fadeIn();});
+			$(".fixxieyitit .guanbifixxy").click(function(){$(".fix_reg_xieyi").fadeOut();});
+			
+			$('#captchas').val('');
+			
+			$("#registerForm").sgfmform({
+				btnSubmit  : '#doRegister',
+				ajaxurl    : '${ctx}/core/user.doRegister.do',
+				tiptype    : 2,
+				submittype : 2,
+				callback   : function(data,url){
+					if (data != null){
+						var obj = data.data[0];
+						if (obj.registerFlag){
+							window.location.href= '${ctx}/core/user.toRegVerMobile.do?orurl='+ '${referer}';
+						} else {
+							//$.sgfmdialog({isModel:false,"info":obj.registerMsg,"showTime":1500,level:1});
+							alertMsg({"content": obj.registerMsg,"type": 2,"close": true,"timeout" : 1500});
+							changeImg();
+							
+						}
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="UserMap">
+
+	<resultMap id="T_member" class="member">
+		<result property="mid" column="mid" />
+		<result property="account" column="account" />
+		<result property="password" column="password" />
+		<result property="openid" column="openid" />
+		<result property="mobile" column="mobile" />		
+		<result property="idcard" column="idcard" />
+		<result property="MType" column="m_type" />
+		<result property="employeeId" column="employee_id" />
+		<result property="registerDate" column="register_date" />
+		<result property="lastLogin" column="last_login" />
+		<result property="status" column="status" />
+		<result property="name" column="name" />
+	</resultMap>
+	
+	<select id="findMemByOpenidOrMobile" resultClass="member" parameterClass="member">
+		SELECT * FROM T_MEMBER WHERE 1 = 1
+		<dynamic>
+			<isNotEmpty prepend="AND" property="openid">
+				OPENID = #openid#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="mobile">
+				MOBILE = #mobile#
+			</isNotEmpty>
+		</dynamic>  
+	</select>
+	
+	<select id="findMsgCodeByIdAndMobile" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT CODE, CREATE_DATE FROM T_USER_MSGRECORD WHERE ID = #id# AND MOBILE = #mobile#
+	</select>
+	
+	<insert id="addSecuritycode">
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT SEQ_MSG.NEXTVAL AS id FROM DUAL
+		</selectKey>
+		INSERT INTO T_USER_MSGRECORD (
+			ID,
+			CREATE_DATE,
+			CODE,
+			MOBILE,
+			BUSSINESS_TYPE,
+			USER_ID
+		) VALUES (
+			#id#,
+			#createDate#,
+			#code#,
+			#mobile#,
+			#bussinessType#,
+			#userId#
+		)
+	</insert>
+	
+	<insert id="doRegisterNewMember">
+		<selectKey resultClass="int" keyProperty="mid">
+			SELECT SEQ_BASE.NEXTVAL AS mid FROM DUAL
+		</selectKey>
+		INSERT INTO T_MEMBER (
+			MID,
+			ACCOUNT,
+			PASSWORD,
+			OPENID,
+			MOBILE,
+			M_TYPE,
+			REGISTER_DATE,
+			LAST_LOGIN
+		) VALUES (
+			#mid#,
+			#account#,
+			#password#,
+			#openid#,
+			#mobile#,
+			#MType#,
+			#registerDate#,
+			#lastLogin#
+		)
+	</insert>
+	
+	<update id="updMemberInfoByOpenid">
+		UPDATE T_MEMBER 
+		<dynamic prepend="SET">
+			<isNotEmpty property="account" prepend=",">
+				ACCOUNT = #account#
+			</isNotEmpty>
+			<isNotEmpty property="password" prepend=",">
+				PASSWORD = #password#
+			</isNotEmpty>
+			<isNotEmpty property="mobile" prepend=",">
+				MOBILE = #mobile#
+			</isNotEmpty>
+			<isNotEmpty property="idcard" prepend=",">
+				IDCARD = #idcard#
+			</isNotEmpty>
+			<isNotEmpty property="MType" prepend=",">
+				M_TYPE = #MType#
+			</isNotEmpty>
+			<isNotEmpty property="employeeId" prepend=",">
+				EMPLOYEE_ID = #employeeId#
+			</isNotEmpty>
+			<isNotEmpty property="lastLogin" prepend=",">
+				LAST_LOGIN = #lastLogin#
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend=",">
+				STATUS = #status#
+			</isNotEmpty>
+			<isNotEmpty property="name" prepend=",">
+				name = #name#
+			</isNotEmpty>
+		</dynamic>
+		WHERE OPENID = #openid#
+	</update>
+
+     <!-- 根据地名查询t_area表数据 -->
+	<select id="findAreaById" resultClass="area">
+		select * from t_area where id = #id#
+	</select>
+
+    <!-- 根据mid查询未付款订单数量 -->
+    <select id="countNoPayedOrder" resultClass="java.lang.Integer">
+        select count(1) from s_order  where  is_valid = 0 and pay_status = 0  and mid = #mid#
+    </select>
+    
+    <!-- 根据mid查询未审核预约单数量 -->
+    <select id="countNoCheckedReservation" resultClass="java.lang.Integer">
+        select count(1) from s_reservation where status = 0 and (mid = #mid# OR re_tel=#mobile#)
+    </select>
+    
+    <!-- 根据mid查询未预约的卡密数量 -->
+    <select id="countNoReveredCard" resultClass="java.lang.Integer">
+	    select count(1) from s_order_line a left join s_order b on a.oid = b.oid 
+		where a.is_valid = 0 and b.pay_status = 2 and b.is_valid = 0  and b.mid = #mid#
+    </select>
+    
+    <update id="changeOrderIsValid" parameterClass="java.util.HashMap">
+		update s_order set is_valid = 1 where oid = #oid#
+	</update>
+</sqlMap>

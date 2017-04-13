@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- 系统环境设置 -->
+    <settings useStatementNamespaces="true"/>
+    <!-- 全局别名声明 -->
+    
+    <typeAlias type="com.sgfm.datacenter.entity.CgVariable"  alias="variable"/>
+
+    <typeAlias type="com.sgfm.datacenter.entity.TAutoStrategy"  alias="autoStrategy"/>
+	<typeAlias type="com.sgfm.datacenter.entity.TPlaydayStrategy"  alias="playdayStrategy"/>
+	<typeAlias type="com.sgfm.datacenter.entity.THolidayStrategy"  alias="holidayStrategy"/>
+	<typeAlias type="com.sgfm.datacenter.entity.TSigndayStrategy"  alias="signdayStrategy"/>
+	<typeAlias type="com.sgfm.datacenter.entity.TMember"  alias="member"/>
+	<typeAlias type="com.sgfm.datacenter.entity.TArea" alias="area"/>
+	<typeAlias type="com.sgfm.datacenter.entity.SReservation"  alias="reservation"/>
+    <typeAlias type="com.sgfm.datacenter.entity.SOrder"  alias="order"/>
+    <typeAlias type="com.sgfm.datacenter.entity.SOrderLine"  alias="orderLine"/>
+
+
+	<!-- 映射文件注册 (BaseMap.xml必须前置 )-->	
+	<sqlMap resource="com/sgfm/base/sqlmap/BaseMap.xml" />
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/ProductMap.xml"/>
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/ShopMap.xml"/>
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/CacheMap.xml" />
+    <sqlMap resource="com/sgfm/datacenter/sqlmap/StrategyMap.xml" />
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/UserMap.xml" />
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/OrderMap.xml" />
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/CardMap.xml" />
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/CommonMap.xml" />
+	<sqlMap resource="com/sgfm/datacenter/sqlmap/ReservationMap.xml" />
+
+   </sqlMapConfig>

@@ -1,0 +1,9 @@
+
+request.url.no.intercept=
+
+pageSize =16
+
+uploadFilePath=http\://192.168.1.130\:8321
+
+yk.payType=T
+ykMall.url =http\://121.40.59.15\:8083/

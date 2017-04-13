@@ -1,0 +1,34 @@
+body{background: #f0f0f0;}
+.check{margin: 0.25rem 0 0; height: 2rem; line-height: 2rem; background: #fff;}
+.check span{display: block; float: left; width: 50%; text-align: center; font-size: 0.65rem; color: #666;}
+.check span.active{background: #1aa9b9; color: #fff;}
+
+.coupon{overflow: hidden;}
+label{ background-color: #fff; font-size: 0.6rem; color: #716f6f; line-height: 1.0rem;  display: block; margin: 0.5rem 0 0;}
+label p{ margin: 0; padding: 0.25rem 0.5rem; font-size: 0.65rem;}
+label p i{ float: left; overflow: hidden; height:2.0rem; line-height: 2.0rem; vertical-align: top;}
+label p b{ display: table-cell; width: 1000px; font-weight: normal; position: relative;}
+label p input{ display: inline-block; border: none; width: 100%; color: #4b4643; font-size: 0.6rem; outline: 0; border-radius: 0; -webkit-appearance: none; line-height: 1.0rem; margin: 0.5rem 0;}
+
+.activationBtn{margin: 1.5rem 0.625rem;}
+.activationBtn a{width: 100%; border-radius: 5px; background: #e25d39; height: 2rem; line-height: 2rem; color: #fff; text-align: center; display: block;}
+
+
+.coupon{overflow: hidden;}
+.jfyhqbg{width:100%; max-width:640px; font-size:0.55rem; border-radius:5px; clear:both; box-sizing:border-box; color:#999;}
+.jfyhqbg .jfyhqtit{clear:both; height:2rem; line-height:2rem; color: #e23104; border-bottom:2px #19A9B9 solid; padding:0 0.625rem; background:#fff; font-size: 0.65rem;}
+.jfyhqbg .mingxilist{clear:both; overflow:hidden; background:#fff;}
+.jfyhqbg .mingxilist .toplist{clear:both; overflow:hidden; border-bottom:1px #f0f0f0 solid; text-align:center; padding:0 0.75rem; line-height:2rem;color:#716f6f;line-height: 2.125rem;border: none;}
+.jfyhqbg .mingxilist .toplist .list1{width:37.5%; display:inline-block; float:left; overflow:hidden; box-sizing:border-box;}
+.jfyhqbg .mingxilist .toplist .list2{width:20%; display:inline-block; float:left; overflow:hidden; box-sizing:border-box;}
+.jfyhqbg .mingxilist .toplist .list3{width:42.5%; display:inline-block; float:left; overflow:hidden; box-sizing:border-box;text-align: left;}
+
+.jfyhqbg .mingxilist .list{clear:both; overflow:hidden; border-bottom:1px #f0f0f0 solid; text-align:center; padding:0 0.75rem; line-height:2rem;}
+.jfyhqbg .mingxilist .list .list1{width:39%; display:inline-block; float:left; overflow:hidden; box-sizing:border-box;}
+.jfyhqbg .mingxilist .list .list2{width:17%; display:inline-block; float:left; overflow:hidden; box-sizing:border-box; color: #e23104;}
+.jfyhqbg .mingxilist .list .list3{width:44%; display:inline-block; float:left; overflow:hidden; box-sizing:border-box;}
+
+
+.integral{overflow: hidden; display: none;}
+.integral p{margin: 0.5rem 0; padding: 0 0.625rem; background: #fff; line-height: 2.0rem; color: #666;}
+.integral p span{color: #e23104;}

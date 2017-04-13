@@ -1,0 +1,29 @@
+package com.sgfm.datacenter.service.product;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.sgfm.datacenter.entity.CgVariable;
+import com.sgfm.datacenter.entity.TArea;
+
+public interface ProductService {
+
+	public List<HashMap<String,Object>> findAllCity();
+	
+	public HashMap<String,Object> findProductList(HashMap<String,Object> map);
+	
+	public boolean findPageExist(CgVariable cg);
+	
+	public List<HashMap<String, Object>> findProductByCityAndPid(CgVariable cgVariable);
+	
+	public HashMap<String, Object> toProductDetail(HashMap<String,Object> map);
+	
+	public List<HashMap<String,Object>> findAllMedicalByPid(Map<String, String> map);
+	
+	public List<Map> findMedicalList(Map<String, Object> map);
+	
+	public HashMap<String, Object> findShopsByPidAndCity(HashMap<String, Object> map);
+	
+	public TArea findAreaById(int id);
+}

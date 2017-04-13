@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- 系统环境设置 -->
+    <settings useStatementNamespaces="true"/>
+    <!-- 全局别名声明 -->
+    
+    <!-- <typeAlias type="com.sgfm.datacenter.entity.TAppraiseTag"  alias="appraiseTag"/> -->
+     
+
+	<!-- 映射文件注册 (BaseMap.xml必须前置 )-->	
+	<sqlMap resource="com/sgfm/base/sqlmap/BaseMap.xml" />
+   </sqlMapConfig>

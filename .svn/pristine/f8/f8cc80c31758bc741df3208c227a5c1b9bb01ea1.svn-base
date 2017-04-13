@@ -1,0 +1,142 @@
+@charset "utf-8";
+
+
+.page-tab {
+	background: #fff;
+}
+
+.page-tab ul {
+	width: 100%;
+	max-width: 640px;
+	margin: 0 auto;
+	position: fixed;
+	z-index: 9999;
+	background: #fff;
+}
+
+.page-tab ul li {
+	float: left;
+	text-align: center;
+	border: 1px solid #e8e8e8;
+	font-size: 1.4rem;
+	height: 4rem;
+	line-height: 4rem;
+	color: #666;
+}
+
+.page-tab ul li:last-child {
+	border-right: 0;
+	width: 20%;
+}
+
+.page-tab ul li.tab-all {
+	width: 20%;
+}
+
+.page-tab ul li.tab-active {
+	color: #1e8bc3;
+	border-color: #1e8bc3;
+}
+
+.page-tab ul li.tab-bar {
+	width: 30%;
+	font-size: 1.3rem;
+	border-right:0;
+}
+
+#model_box1 {
+	width: 100%;
+	height: 100%;
+	z-index: 999;
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5);
+	max-width: 640px;
+	margin: 0 auto;
+	min-width: 320px;
+	display: none;
+}
+
+#model_box1 .indexNav {
+	width: 100%;
+	margin-top: 8rem;
+}
+
+#model_box1 .indexNav ul.more {
+	width: 100%;
+	max-width: 640px;
+	margin: 0 auto;
+	background: #fff;
+	position: fixed;
+	z-index: 999;
+}
+
+#model_box1 .indexNav ul.more li {
+	width: 33.3%;
+}
+
+.page-content ul {
+	width: 100%;
+	max-width: 640px;
+	margin: 0 auto;
+}
+
+.page-content ul li {
+	float: left;
+	width: 49.49%;
+	background: #fff;
+	margin: 0.08rem;
+	border-radius: 4px;
+	position: relative;
+}
+
+.page-content ul li.first {
+	margin-top: 4.2rem;
+	margin-bottom: 0;
+}
+
+.page-content ul li img {
+	width: 100%;
+	padding: 1% 1.56%;
+	border-radius:0.6rem;
+	min-height: 105px;
+}
+
+.page-content ul li p.title {
+	color: #333;
+	font-weight: bold;
+	font-size: 1.6rem;
+	margin: 2% 1.56%;
+}
+
+.page-content ul li p.content {
+	margin-left: 1.56%;
+}
+
+.page-content ul li p.content span:first-child {
+	color: #d64541;
+	font-size: 1.3rem;
+}
+
+.page-content ul li p.content span:last-child {
+	color: #666;
+	float: right;
+	margin-right: 1.56%;
+}
+
+.page-more {
+	text-align: center;
+	font-size: 1.6rem;
+	color: #027ac8;
+	line-height: 2;
+	background: #fff;
+	border-radius: 2px;
+}
+
+.page-more img {
+	width: 5%;
+}

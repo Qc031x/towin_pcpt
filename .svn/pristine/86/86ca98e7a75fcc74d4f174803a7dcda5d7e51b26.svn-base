@@ -1,0 +1,77 @@
+/*鏈烘瀯璇︽儏*/
+.agencydet{padding: 10px 3.2%;overflow: hidden;background:#fff url("../images/riliqiean2.png") no-repeat 96% center;background-size: 7px auto; border-bottom: 1px solid #ddd;}
+.agencydet a{overflow: hidden;display: block;}
+.agencydet img{width: 66px;float: left;}
+.agencydet .content{margin-left: 80px;}
+.agencydet .content p{margin: 0;padding: 0;font-size:12px; color: #989898;}
+.agencydet .content .hosname{margin: 0 0 7px; padding: 0; font-size:13px; color: #6e6e6f; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+.agencydet .content .hostype{margin-right: 9%;}
+.agencydet .content .distance{padding: 0 0 0 17px; background: url("../images/map.png") no-repeat left center; background-size: 13px auto;}
+.agencydet .content .distance b{ color: #4b4643; font-weight: normal;}
+.agencydet .content .hosadss{ margin: 0 0 0 7%;}
+
+.agencyinfo{ width:100%; height:auto; background-color:#FFF; padding:0.4rem 3.2%; border:#ddd solid;border-width: 1px 0; overflow: hidden;}
+.agencyinfo p{ font-size: 14px; color: #6e6e6f; float:left; width:100%; height:auto; line-height:1.1rem; overflow: hidden;}
+.agencyinfo p span{float: left;}
+.agencyinfo .addinfo{width: 75%;}
+
+
+/*棰勭害鏃ュ巻*/
+.calender {width: 100%; cursor: pointer; border:#ddd solid;border-width:1px 0; overflow: hidden; padding:0.4rem 3.2%;}
+.calender h3 { float: left; width: auto; color: #7b7b7c; line-height: 1.2rem; height: 1.2rem; padding-left:1.1rem; font-weight: normal; background: url("../images/calender.png") no-repeat left 0.125rem; font-size: 13px; background-size: 16% auto;}
+.calender p{float: left; padding-left: 5px; font-weight: normal; width: auto;  line-height: 1.2rem; color: #7b7b7c; font-size: 12px;}
+.calender i{ float: right; display: block; background: url("../images/arrdownb.png") no-repeat center center; background-size: 15px auto; width: 15px; height: 1.2rem; -webkit-transition: transform 500ms ease-in-out; transition: transform 500ms ease-in-out; -webkit-transform: rotate(0deg); transform: rotate(0deg); cursor: pointer;}
+.calender i.active{-webkit-transform: rotate(180deg);transform: rotate(180deg);}
+
+.yue_tit{width:100%; clear:both; height: 1.93rem; line-height:1.93rem; font-size:12px; text-align:center; background:#f1f1f1; border-bottom:1px #ddd solid; color:#333232; position:relative;}
+.yue_tit .riliqiean1{width:8px; height:15px; background:url(../images/riliqiean1.png) center center no-repeat; background-size: 8px auto; cursor:pointer; display:inline-block; position:absolute; top:10px; left:26.5%; overflow:hidden;}
+.yue_tit .riliqiean2{width:8px; height:15px; background:url(../images/riliqiean2.png) center center no-repeat; background-size: 8px auto; cursor:pointer; display:inline-block; position:absolute; top:10px; right:26.5%; overflow:hidden;}
+.yue_tit .riliyear{line-height:1.93rem; display:inline-block; overflow:hidden;}
+.yue_tit .riliyear .xlxzrili{line-height:1.93rem; display:inline-block; font-size: 12px; color: #333232;}
+
+.yuyue_rili{width:100%; background:#fff; overflow:hidden; display: none; z-index: 9999;}
+.yuyue_rili .fixxingqi{width:100%; overflow:hidden; height:1.5rem; line-height:1.5rem; background:#f5f5f5; border-bottom:1px #ddd solid; text-align:center; color:#9f9f9f;}
+.yuyue_rili .fixxingqi li{width:14.28%; height:1.5rem; float:left; border-right:1px #ddd solid; font-size:12px;}
+.yuyue_rili .fixxingqi li:nth-child(7n),.yuyue_rili .fixxingqi li:nth-child(7n+1),.yue_rili .yue_day li:nth-child(7n),.yue_rili .yue_day li:nth-child(7n+1){color:#FF8F00;}
+.yuyue_rili .fixxingqi li:nth-child(7n),.yue_rili .yue_day li:nth-child(7n){ border-right: none;}
+
+.yue_rili .yue_day{width:100%; clear:both; overflow:hidden; background:url(../images/rililistbigbg.png) 0 0 repeat; background-size: 100% 80px;  text-align:center;}
+.yue_rili .yue_day li{width:14.28%; height:40px; line-height:20px; font-size:10px; float:left; font-weight:bold; color:#bcbcbc; border:1px #ddd solid; border-width:0 1px 1px 0; position:relative;}
+.yue_rili .yue_day li a{width:66px; height:45px; position:absolute; top:0px; left:0px; text-align:center; background:#eee; display:none; cursor:context-menu;}
+.yue_rili .yue_day li:hover a{display:block;}
+.yue_rili .yue_day li a em{width:40px; height:20px; line-height:20px; display:inline-block; margin:10px 0 0 0; background:#00AFC7; color:#fff; border-radius:3px; cursor:pointer;}
+.yue_rili .yue_day li a em:hover{background:#FF8F00;}
+
+
+.yue_rili .yue_day li.over{color:#999; line-height:2rem;}
+.yue_rili .yue_day li.today{color:#bcbcbc; background: url("../images/today.png") no-repeat right bottom; background-size: 20% auto;}
+.yue_rili .yue_day li span{font-weight:normal; font-size:12px;}
+.yue_rili .yue_day li span.zt1{color:#00AFC7;}  /*  鍙害  */
+.yue_rili .yue_day li span.zt2{color:#FF8F00;}  /*  宸叉弧锛屽亣鏃ワ紝浼戞伅锛屾殏鍋滈绾� */
+
+
+/*濂楅鍒楄〃*/
+.screen{border-bottom: 1px solid #ddd; overflow: hidden; background: #fff; width: 100%; position: relative;}
+.screenlist{ width: 92%; margin: 0 3.2%; overflow: hidden;float: left; position: relative;}
+.screenlist ul{white-space:nowrap;display: inline-block;position:relative;}
+.screenlist ul li{display: inline-block;padding: 10px 5px;margin: 0 2px; color: #6e6e6f;transition:opacity 0.3s;}
+.screenlist ul li.active{border-bottom: 2px solid #1aa9b9;}
+
+.prolist ul{border-bottom: 1px solid #dbdbdb; overflow: hidden; display: none;}
+.prolist ul li a{display: block;overflow: hidden;background-color: #fff;padding: 5px 3.2%;}
+.prolist ul li a img{float: left;width: 97px;height: 60px;}
+.prolist ul li a .proinfo{margin-left: 107px;}
+.prolist ul li a .proinfo p{margin: 0;padding: 0; font-size:12px; color: #6e6e6f;}
+.prolist ul li a .proinfo p:first-child{margin: 0 0 6px 0;}
+.prolist ul li a .proinfo p:nth-child(2){margin: 0 0 6px 0;}
+.prolist ul li a .proinfo p b{ color: #eb5b41; font-size:13px;}
+.prolist ul li a .proinfo p em{ color: #999999; font-size:10px; margin-left: 10px; font-style: normal; text-decoration: line-through; }
+.prolist ul li a .proinfo .order{ background-color: #eb5b41; color: #fff; float: right; padding: 2px 10px; border-radius: 2px;  }
+.prolist ul li a .proinfo .sold{ color: #999; font-size:10px;}
+.prolist ul li+li{border-top: 1px solid #dbdbdb;}
+
+
+/*缈婚〉鎸夐挳*/
+.pagebtn{font-size:14px;padding: 10px 3.2%; text-align: center; color: #666666;}
+.pagebtn .pagecla{background-color: #1aa9b9; color: #fff;padding: 5px 10px; border-radius: 3px;margin: 0 10px; cursor: pointer;}
+.pagebtn .nobtn{background-color: #aaa; color: #fff; pointer-events: none;}

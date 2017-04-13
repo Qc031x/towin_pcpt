@@ -1,0 +1,20 @@
+package com.sgfm.datacenter.service.user;
+
+import java.util.HashMap;
+
+import com.sgfm.datacenter.entity.TMember;
+
+
+public interface UserService {
+	
+	public TMember findMemberByAccountOrMobile(TMember tMember);
+	
+	public TMember findMemberByOpenid(TMember tMember);
+	
+	public void doRegisterNewMember(TMember tMember);
+	
+	public void updMemberByOpenid(TMember tMember);
+	
+	public HashMap<String,Object> getPerCenterInfo(TMember tMember);
+
+}

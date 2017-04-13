@@ -1,0 +1,50 @@
+package com.sgfm.datacenter.dao.product;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.sgfm.base.dao.BaseDao;
+import com.sgfm.datacenter.entity.CgVariable;
+
+@Repository
+@SuppressWarnings("unchecked")
+public class ProductDao extends BaseDao{
+   
+	
+	/**
+	 * 查询有商品的城市
+	 * @return
+	 * @author JingZeKuan
+	 */
+	public List<HashMap<String,Object>> findAllCity(){
+		return super.getSqlMapClientTemplate().queryForList("ProductMap.findAllCity");
+	}
+	
+	public List<HashMap<String,Object>> findProductListByCondition(HashMap<String,Object> map){
+    	return super.getSqlMapClientTemplate().queryForList("ProductMap.findProductListByCondition",map);
+    }
+	
+	public int countProductByCondition(HashMap<String,Object> map){
+    	return (Integer) super.getSqlMapClientTemplate().queryForObject("ProductMap.countProductByCondition", map);
+    }
+	
+	public HashMap<String,Object> getCouponByPid(String pid){
+		return (HashMap<String,Object>)super.getSqlMapClientTemplate().queryForObject("ProductMap.getCouponByPid",pid);
+	}
+	
+	public int findEsidExist(CgVariable cg) {
+		return (Integer)super.getSqlMapClientTemplate().queryForObject("ProductMap.findEsidExist", cg);
+	}
+	
+	public int findPidExist(String pid) {
+		return (Integer)super.getSqlMapClientTemplate().queryForObject("ProductMap.findPidExist", pid);
+	}
+	
+	public List<HashMap<String, Object>> findProductByCityAndPid(CgVariable cgVariable) {
+		return super.getSqlMapClientTemplate().queryForList("ProductMap.findProductByCityAndPid", cgVariable);
+	}
+	
+}

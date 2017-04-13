@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="OrderMap">
+
+
+   <sql id="UserCardCondition">		
+          <isNotEmpty prepend="and" property="oid">
+          	  sol.oid = #oid#
+           </isNotEmpty>
+            <isNotEmpty prepend="and" property="card">
+          	  sol.card_number = #card#
+           </isNotEmpty>
+            <isNotEmpty prepend="and" property="password">
+          	  sol.password = #password#
+           </isNotEmpty>
+    </sql>
+    
+    <select id="getOid" resultClass="int">
+		SELECT SEQ_BASE.NEXTVAL FROM DUAL
+	</select>
+	
+	<select id="findPidsByOid" resultClass="java.util.HashMap">
+		 SELECT SOL.PID FROM S_ORDER_LINE SOL JOIN S_ORDER SO ON SOL.OID = SO.OID WHERE SO.OID = #oid#
+	</select>
+	
+	<select id="findOrderByOid" resultClass="order">
+		SELECT oid, mid, sum_price AS sumPrice, ip, post_date AS postDate, 
+		pay_id AS payId, f_where AS fWhere, is_valid AS isValid, 
+		pay_status AS payStatus, order_type AS orderType
+		FROM S_ORDER WHERE OID = #oid# ORDER BY OID DESC
+	</select>
+	
+	<select id="findMembersAddressByMid" resultClass="java.util.HashMap">
+		SELECT CAID,
+		       PROVINCE,
+		       CITY,
+		       COUNTY,
+		       ADDRESS,
+		       MOBILE,
+		       NAME,
+		       IS_DEFAULT,
+		       (SELECT TITLE FROM T_AREA WHERE ID = PROVINCE) EPROVINCE,
+		       (SELECT TITLE FROM T_AREA WHERE ID = CITY) ECITY,
+		       (SELECT TITLE FROM T_AREA WHERE ID = COUNTY) ECOUNTY
+		  FROM S_CONSIGNEE_ADDRESS
+		 WHERE MID = #mid#
+		 ORDER BY IS_DEFAULT DESC NULLS LAST
+	</select>
+	
+	<update id="updateDefaultAdd">
+		UPDATE S_CONSIGNEE_ADDRESS SET IS_DEFAULT = 0 WHERE MID = #mid# 
+	</update>
+	
+	<insert id="insertOrder" parameterClass="order">
+		INSERT INTO S_ORDER (
+			OID,
+			SUM_PRICE,
+			MID,
+			IP,
+			POST_DATE,
+			PAY_ID,
+			F_WHERE,
+			ORDER_TYPE
+		) VALUES (
+			#oid#,
+			#sumPrice#,
+			#mid#,
+			#ip#,
+			#postDate#,
+			#payId#,
+			#FWhere#,
+			#orderType#
+		)
+	</insert>
+	
+	<insert id="insertPayLine" parameterClass="payLine">
+		INSERT INTO S_PAY_LINE (
+			PAY_ID,
+			PAY_SOURCE,
+			CREATE_TIME,
+			PAY_STATUS,
+			SURPLUS,
+			TRADE_NOTE
+		) VALUES (
+			#payId#,
+			#paySource#,
+			#createTime#,
+			#payStatus#,
+			#surplus#,
+			#tradeNote#
+		)
+	</insert>
+	
+	<insert id="insertOrderLine" parameterClass="orderLine">
+		INSERT INTO S_ORDER_LINE (
+			OLID,
+			OID,
+			PID,
+			SHOP_PRICE,
+			NAME,
+			PIMG,
+			CARD_NUMBER,
+			PASSWORD
+		) VALUES (
+			SEQ_BASE.NEXTVAL,
+			#oid#,
+			#pid#,
+			#shopPrice#,
+			#name#,
+			#pimg#,
+			#cardNumber#,
+			#password#
+		)
+	</insert>
+	
+	<insert id="addReservation">
+		INSERT INTO S_RESERVATION (
+			RID,
+			PID,
+			P_NAME,
+			OID,
+			MID,
+			POST_DATE,
+			RE_NAME,
+			RE_CID,
+			RE_SEX,
+			RE_TEL,
+			RE_MARRIAGE,
+			RE_YEAR,
+			ESID,
+			IS_VIP,
+			PAPER_REPORTS,
+			R_TYPE,
+			STATUS,
+			CREATER_TIME,
+			DOC_REPORTS
+		) VALUES (
+			SEQ_BASE.NEXTVAL,
+			#pid#,
+			#pName#,
+			#oid#,
+			#mid#,
+			#postDate#,
+			#reName#,
+			#reCid#,
+			#reSex#,
+			#reTel#,
+			#reMarriage#,
+			#reYear#,
+			#esid#,
+			#isVip#,
+			#paperReports#,
+			#rType#,
+			#status#,
+			#createrTime#,
+			#docReports#
+		)
+	</insert>
+	
+	<insert id="addAddress">
+		<selectKey resultClass="int" keyProperty="caid">
+			SELECT SEQ_BASE.NEXTVAL as caid FROM DUAL
+		</selectKey>
+		INSERT INTO S_CONSIGNEE_ADDRESS (
+			CAID,
+			NAME,
+			PROVINCE,
+			CITY,
+			ADDRESS,
+			MOBILE,
+			MID,
+			COUNTY,
+			IS_DEFAULT
+		) VALUES (
+			#caid#,
+			#name#,
+			#province#,
+			#city#,
+			#address#,
+			#mobile#,
+			#mid#,
+			#county#,
+			#isDefault#
+		)
+	</insert>
+    
+	<!-- 查询会员所有订单信息-->		 	 
+	 <select id="findUserOrder" resultClass="java.util.HashMap" >
+	    select a.post_date, a.is_valid, to_char(a.oid) oid,a.pay_status,a.sum_price,b.name 
+	    from s_order a left join t_member b on a.mid=b.mid where a.mid=#mid#
+	    ORDER BY a.post_date desc
+	</select>
+	
+	<select id="findProductByOid" resultClass="java.util.HashMap">
+		 SELECT sol.pid,sol.name
+         from s_order_line sol
+         where to_char(sol.oid)=#oid#
+         group by sol.pid,sol.name   
+	</select>
+	
+	<!-- 查询我的卡密 -->	
+	<select id="findUserCardByMid" resultClass="java.util.HashMap">
+		select sol.oid,sol.name,sol.pid,sol.card_number,sol.password,sol.is_valid,
+		to_char(add_months(to_date(so.post_date,'yyyy-MM-dd HH24:mi:ss'),3),'yyyy-MM-dd') last_date
+		from s_order_line sol 
+		left join s_order so on sol.oid=so.oid 
+		where so.mid= #mid# and so.pay_status=2
+	    <dynamic>  
+            <include refid="UserCardCondition"/>
+        </dynamic>
+		order by sol.is_valid asc,so.post_date desc
+	</select>
+	
+</sqlMap>

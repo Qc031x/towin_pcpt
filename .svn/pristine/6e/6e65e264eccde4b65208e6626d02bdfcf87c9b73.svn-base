@@ -1,0 +1,219 @@
+package com.sgfm.datacenter.action.shop;
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.sgfm.base.action.BaseAction;
+import com.sgfm.datacenter.SysConstant;
+import com.sgfm.datacenter.entity.CgVariable;
+import com.sgfm.datacenter.exception.AppException;
+import com.sgfm.datacenter.service.shop.ShopService;
+import com.sgfm.datacenter.util.JsonResponseResult;
+
+@Controller
+@Scope("prototype")
+public class ShopAction extends BaseAction{
+
+	private static final long serialVersionUID = 1L;
+	private Log logger = LogFactory.getLog(this.getClass());
+	
+	@Autowired
+	private ShopService shopService;
+	
+	public CgVariable cgVariable = new CgVariable();
+	
+	/**
+	 * 跳转至机构列表页面
+	 * @return
+	 * @author JingZeKuan
+	 */
+	public String toEntityShopListPage(){
+		 try {
+			 String cityId = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString();
+			 
+			 String distance = super.getRequest().getParameter("distance");
+			 
+			 HashMap<String, Object> param = new HashMap<String, Object>();
+			 param.put("categoryid", cgVariable.getCategoryidFour());
+			 param.put("county", cgVariable.getCountyid());
+			 param.put("paixu", cgVariable.getPaixu());
+			 param.put("brandId", cgVariable.getId());
+			 param.put("city", cityId);
+	         param.put("distance", distance);
+	            
+             super.getRequest().setAttribute("cgVariable", cgVariable);
+             super.getRequest().setAttribute("distance", distance);
+
+             if(null==super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG")){
+                return super.toContentView("shop", "getPoint");
+             }
+             param.put("locationPoint_lng", super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG"));
+             param.put("locationPoint_lat", super.getRequest().getSession().getAttribute("LOCATION_POINT_LAT"));
+
+             HashMap<String, Object> infoMap = shopService.toShopCenter(param);
+             super.getRequest().setAttribute("countryList", infoMap.get("countryList"));
+             super.getRequest().setAttribute("branchTypeList", infoMap.get("branchTypeList"));
+
+             HashMap<String, Object> MMap = shopService.getEntityShopList(param);
+
+             super.getRequest().setAttribute("pages", MMap.get("pages"));
+             super.getRequest().setAttribute("medList", JSONArray.fromObject(MMap.get("list")).toString());
+
+	        } catch (final AppException app) {
+	            this.logger.error(app);
+	        } catch (final Exception e) {
+	            this.logger.error(e);
+	        }
+	        return super.toContentView("shop", "entityShopList");	
+	}
+	
+	 /**
+     * 将用户当前坐标存入session
+     * 
+     * @return
+     */
+    public String setLocationPoint() {
+
+        JsonResponseResult result = null;
+        try {
+            // 将用户坐标存入session
+            super.getRequest().getSession().setAttribute("LOCATION_POINT_LNG", super.getRequest().getParameter("locationPoint_lng"));
+            super.getRequest().getSession().setAttribute("LOCATION_POINT_LAT", super.getRequest().getParameter("locationPoint_lat"));
+            super.getRequest().getSession().setAttribute("CITY", super.getRequest().getParameter("city"));
+            super.getRequest().getSession().setAttribute("DISTRICT", super.getRequest().getParameter("district"));
+            super.getRequest().getSession().setAttribute("ADDRESS", super.getRequest().getParameter("address"));
+
+        } catch (final AppException app) {
+            logger.error(app);
+            final String msg = getText(app.getMessage());
+            result = JsonResponseResult.createFalied(msg);
+            super.jsonResult = JSONObject.fromObject(result).toString();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            logger.error(e);
+            final String msg = getText("操作失败！");
+            result = JsonResponseResult.createFalied(msg);
+            super.jsonResult = JSONObject.fromObject(result).toString();
+        }
+        return BaseAction.JSON;
+    }
+	
+	/**
+     * 机构列表页面的加载更多
+     */
+    public String ajaxMedLoadMore() {
+        JsonResponseResult result = null;
+        try {
+            String cityId = super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString();
+
+            HashMap<String, Object> param = new HashMap<String, Object>();
+            param.put("categoryid", cgVariable.getCategoryidFour());
+            param.put("county", cgVariable.getCountyid());
+            param.put("paixu", cgVariable.getPaixu());
+            param.put("brandId", cgVariable.getId());
+            param.put("city", cityId);
+            param.put("pageNo", cgVariable.getCurrentPage());
+            
+            String distance = super.getRequest().getParameter("distance");
+            param.put("distance", distance);
+            super.getRequest().setAttribute("distance", distance);
+
+            param.put("locationPoint_lng", super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG"));
+            param.put("locationPoint_lat", super.getRequest().getSession().getAttribute("LOCATION_POINT_LAT"));
+            
+            super.getRequest().setAttribute("cgVariable", cgVariable);
+            HashMap<String, Object> MMap = shopService.getEntityShopList(param);
+
+            super.jsonResult = JSONArray.fromObject(MMap.get("list")).toString();
+        } catch (final AppException app) {
+            logger.error(app);
+            final String msg = getText(app.getMessage());
+            result = JsonResponseResult.createFalied(msg);
+            super.jsonResult = JSONObject.fromObject(result).toString();
+        } catch (final Exception e) {
+            e.printStackTrace();
+            logger.error(e);
+            final String msg = getText("操作失败！");
+            result = JsonResponseResult.createFalied(msg);
+            super.jsonResult = JSONObject.fromObject(result).toString();
+        }
+        return BaseAction.JSON;
+    }
+    
+    /**
+     * 跳转到分院详情页
+     * @return
+     * @author kangliangyu
+     */
+	public String toBranchDetails(){
+		
+		try {
+			 	String esid = super.getRequest().getParameter("esid");
+			 	if(esid == null){
+			 		this.getResponse().sendError(404);
+	                return "";
+			 	}
+			 	
+			 	HashMap<String, Object> map = new HashMap<String, Object>();
+			 	map.put("esid", esid);
+	            map.put("city", super.getRequest().getSession().getAttribute(SysConstant.SYS_CITYID).toString());
+
+	            if (null == super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG")) {
+	            	return super.toContentView("shop", "getPoint");
+	            }
+	            map.put("LOCATION_POINT_LNG", super.getRequest().getSession().getAttribute("LOCATION_POINT_LNG"));
+	            map.put("LOCATION_POINT_LAT", super.getRequest().getSession().getAttribute("LOCATION_POINT_LAT"));
+	            HashMap<String, Object> info = shopService.findMECdetail(map);
+	            
+	            if(info == null || info.isEmpty()){
+	            	this.getResponse().sendError(404);
+	                return "";
+	            }
+
+	            super.getRequest().setAttribute("info", info);
+        } catch (final AppException app) {
+            this.logger.error(app);
+        } catch (final Exception e) {
+            this.logger.error(e);
+        }
+		
+	    return super.toContentView("shop", "branchDetails");
+	}
+	
+	public String findMECtaocan() {
+
+        JsonResponseResult result = null;
+        try {
+
+            HashMap<String, Object> param = new HashMap<String, Object>();
+            param.put("cgVariable", cgVariable);
+            param.put("page", super.getRequest().getParameter("page"));
+            HashMap<String, Object> info = shopService.findMECtaocan(param);
+
+            result = JsonResponseResult.createSuccess();
+
+            result.addData(info);
+
+            result.setReturncode(0);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            final String msg = this.getText("操作失败！");
+            result = JsonResponseResult.createFalied(msg);
+        }
+        super.jsonResult = JSONObject.fromObject(result).toString();
+        logger.info(super.jsonResult);
+
+        return BaseAction.JSON;
+    }
+	
+}

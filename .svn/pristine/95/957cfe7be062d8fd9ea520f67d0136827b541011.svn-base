@@ -1,0 +1,102 @@
+package com.sgfm.datacenter.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+
+/**
+ * The persistent class for the S_PAY_LINE database table.
+ * 
+ */
+@Entity
+@Table(name="S_PAY_LINE")
+@NamedQuery(name="SPayLine.findAll", query="SELECT s FROM SPayLine s")
+public class SPayLine implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@Column(name="PAY_ID")
+	private long payId;
+
+	@Column(name="CREATE_TIME")
+	private String createTime;
+
+	@Column(name="PAY_SOURCE")
+	private String paySource;
+
+	@Column(name="PAY_STATUS")
+	private Integer payStatus;
+
+	@Column(name="PAY_TYPE")
+	private Integer payType;
+
+	private Integer surplus;
+
+	@Column(name="TRADE_NOTE")
+	private String tradeNote;
+
+	public SPayLine() {
+	}
+
+	public long getPayId() {
+		return this.payId;
+	}
+
+	public void setPayId(long payId) {
+		this.payId = payId;
+	}
+
+	public String getCreateTime() {
+		return this.createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getPaySource() {
+		return this.paySource;
+	}
+
+	public void setPaySource(String paySource) {
+		this.paySource = paySource;
+	}
+
+	public Integer getPayStatus() {
+		return this.payStatus;
+	}
+
+	public void setPayStatus(Integer payStatus) {
+		this.payStatus = payStatus;
+	}
+
+	public Integer getPayType() {
+		return this.payType;
+	}
+
+	public void setPayType(Integer payType) {
+		this.payType = payType;
+	}
+
+	public Integer getSurplus() {
+		return this.surplus;
+	}
+
+	public void setSurplus(Integer surplus) {
+		this.surplus = surplus;
+	}
+
+	public String getTradeNote() {
+		return this.tradeNote;
+	}
+
+	public void setTradeNote(String tradeNote) {
+		this.tradeNote = tradeNote;
+	}
+
+}

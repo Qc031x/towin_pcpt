@@ -1,0 +1,14 @@
+package com.sgfm.datacenter.service.user.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sgfm.datacenter.dao.user.UserDao;
+import com.sgfm.datacenter.service.user.UserService;
+
+@Service
+public class UserServiceImpl implements UserService{
+	@Autowired
+	private UserDao userDao;
+
+}

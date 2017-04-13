@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd ">
+	<!-- 指定Spring需要扫描的包，便于识别被注解的受托管bean -->
+	<context:component-scan base-package="com.sgfm" scoped-proxy="interfaces">
+	   <context:exclude-filter type="regex" expression="com.sgfm.base.jms.demo.*"/>
+	</context:component-scan>
+	<!-- 配置信息加载 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:db.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 数据源 -->
+    <bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${core.driverClassName}" />
+		<property name="jdbcUrl" value="${core.url}" />
+		<property name="user" value="${core.username}" />
+		<property name="password" value="${core.password}" />
+		<property name="initialPoolSize" value="10"/>
+		<property name="maxStatements" value="0"/>
+		 <property name="minPoolSize" value="5" />  
+		<property name="maxPoolSize" value="200"/>
+		<property name="maxIdleTime" value="600"/>
+		<property name="unreturnedConnectionTimeout" value="300"/>
+		<property name="debugUnreturnedConnectionStackTraces" value="true"/>
+		<property name="automaticTestTable" value="c3p0_test"/>
+		<property name="idleConnectionTestPeriod" value="60"/>
+	</bean>
+	<!-- 事务管理器 -->
+	<bean id="tscMnger"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds"></property>
+	</bean>
+	<!-- 通知 -->
+	<tx:advice id="tscAdvice" transaction-manager="tscMnger">
+		<tx:attributes>
+			<tx:method name="add*" propagation="NESTED" />
+			<tx:method name="del*" propagation="NESTED" />
+			<tx:method name="upd*" propagation="NESTED" />
+			<tx:method name="do*" propagation="NESTED" />
+			<tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 关联通知和切入点 
+	拦截多个不同的包：expression="execution(* com.sgfm.service.impl.*.*(..)) or execution(* com.sgfm.service2.impl.*.*(..))"
+	拦截多级子包下所有类中所有方法：com.sgfm.datacenter.service.impl..*.*(..) 
+	-->
+	<aop:config>
+		<aop:pointcut id="myCut"
+			expression="execution(* com.sgfm.*.service.*.impl..*.*(..))" />
+		<aop:advisor advice-ref="tscAdvice" pointcut-ref="myCut" />
+	</aop:config>
+	<!-- SqlMapClient -->
+				<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+					<property name="configLocation" value="classpath:IBatisCfg.xml"></property>
+					<property name="dataSource" ref="ds"></property>
+				</bean>
+				
+				
+				<bean id="memcachedPool" class="com.danga.MemCached.SockIOPool"  factory-method="getInstance" init-method="initialize">
+						<constructor-arg>
+						<value>neeaMemcachedPool</value>
+						</constructor-arg>
+						<property name="servers">
+						<list>
+						<value>192.168.1.130:11211</value>
+						</list>
+						</property>
+						<property name="initConn">
+						<value>20</value>
+						</property>
+						<property name="minConn">
+						<value>10</value>
+						</property>
+						<property name="maxConn">
+						<value>2000</value>
+						</property>
+						<property name="nagle">
+						<value>false</value>
+						</property>
+						<property name="socketTO">
+						<value>3000</value>
+						</property>
+			   </bean>
+
+
+					<bean id="memcachedClient" class="com.danga.MemCached.MemCachedClient">
+					<constructor-arg>
+					<value>neeaMemcachedPool</value>
+					</constructor-arg>
+			       </bean>
+	          
+
+</beans>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+		<!-- 验证是否登录-->
+	<filter>
+		<filter-name>phoneRightLimitFilter</filter-name>
+		<filter-class>
+			com.sgfm.datacenter.filter.PCPTRightLimitFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>phoneRightLimitFilter</filter-name>
+		<url-pattern>*.do</url-pattern> 
+		 <dispatcher>REQUEST</dispatcher>
+		 <dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
+	<!--首页拦截验证-->
+	<filter>
+		<filter-name>indexPageFilter</filter-name>
+		<filter-class>
+			com.sgfm.datacenter.filter.IndexPageFilter
+		</filter-class>
+	</filter>	
+	<filter-mapping>	
+		<filter-name>indexPageFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<!-- <url-pattern>*.do</url-pattern> -->
+	</filter-mapping>	
+		
+		
+	<!-- Struts2 -->
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+		
+		  <dispatcher>FORWARD</dispatcher>
+		 <dispatcher>REQUEST</dispatcher>            
+        <!--  <dispatcher>INCLUDE</dispatcher>  
+	--></filter-mapping>	
+	
+
+	
+	
+	<!-- 验证码 -->	
+	<servlet>
+		<servlet-name>loginLicence</servlet-name>
+		<servlet-class>com.sgfm.datacenter.action.random.LoginLicenceAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>loginLicence</servlet-name>
+		<url-pattern>/loginLicence</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 初始化Spring classpath*:spring/applicationContext-*.xml,-->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>        	
+            classpath:applicationContext_*.xml
+        </param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>	
+
+   <error-page>
+		<error-code>400</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>408</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+	
+	<!--<welcome-file-list>
+		<welcome-file>/index2.jsp</welcome-file>
+	</welcome-file-list>
+
+    
+    
+	--><session-config> 
+		<session-timeout>30</session-timeout>
+	</session-config> 
+</web-app>

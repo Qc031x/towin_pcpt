@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd ">
+	<!-- 子系统配置信息加载-->
+	<bean id="propsLoader"
+		class="com.sgfm.base.util.PropsLoader">
+		<constructor-arg index="0">
+		    <list>
+				<value>com/sgfm/datacenter/cfg/demo.properties</value>
+				<value>com/sgfm/datacenter/cfg/dataCenter.properties</value>
+			
+			</list>
+		</constructor-arg>
+	</bean>
+	 <!-- 关联通知和切入点 
+	拦截多个不同的包：expression="execution(* com.sgfm.service.impl.*.*(..)) or execution(* com.sgfm.service2.impl.*.*(..))"
+	拦截多级子包下所有类中所有方法：com.sgfm.datacenter.service.impl..*.*(..) 
+	-->
+	
+	
+	<!-- 注册系统初始化的组件 -->  
+</beans>

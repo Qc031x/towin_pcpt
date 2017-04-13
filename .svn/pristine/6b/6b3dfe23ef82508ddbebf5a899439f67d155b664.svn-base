@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ReservationMap">
+	<!-- 查询我的预约 -->
+	<select id="findReservationByMid" resultClass="java.util.HashMap">
+		select r.rid,r.pid,r.oid,r.mid,r.re_name,r.p_name,r.re_tel,
+		r.post_date,r.creater_time,r.re_cid,r.r_type,r.status,
+		e.ename,e.bname
+		from s_reservation r
+		join (select a.esid,a.csid,a.name as ename,a.city,c.name bname from t_hospital_entity a 
+		left join t_car_services b on a.csid = b.csid
+		left join  t_brand c  on b.brand_id = c.id ) e on r.esid=e.esid 
+		left join t_member tm on r.mid = tm.mid
+		where 1=1 and r.mid=#mid#
+	    order by post_date desc
+	</select>
+	
+</sqlMap>

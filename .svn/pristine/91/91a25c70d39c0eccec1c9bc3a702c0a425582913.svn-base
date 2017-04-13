@@ -1,0 +1,28 @@
+body{background: #fff;}
+/**/
+.myReserve{background:#fff;overflow:hidden; cursor: pointer; width: 100%; border-bottom: 0.4rem solid #eeeff3;}
+.myReserve a{width:25%; height: 2.175rem; line-height: 2.075rem; border-bottom: 0.1rem solid #fff; display:inline-block; float:left; text-align:center; box-sizing:border-box; overflow:hidden; font-size: 0.7rem;}
+.myReserve a:last-child{margin: 0;}
+.myReserve a.active{border-bottom: 0.1rem solid #1aa9b9;}
+.myReserve a span{font-size: 0.55rem;}
+.myReserve a span em{color: #e25d39}
+/**/
+.orderInfo{overflow: hidden; border-bottom: 0.4rem solid #eeeff3;}
+.orderInfo .orderTop{font-size: 0.6rem; color: #999; height: 1.55rem; line-height: 1.55rem; padding: 0 0.5rem;}
+.orderInfo .orderTop span{display: block; float: left;}
+.orderInfo .orderTop span:last-child{float: right;}
+
+.orderCon{height: 4.075rem; padding:  0 0.5rem; background: #fff; border-top: 2px solid #e8e8e8;}
+.orderCon a{display: block;overflow: hidden;}
+.orderCon a .tipInfo span{display: block; float: left; line-height: 1.575rem; font-size: 0.65rem; color: #716f6f;}
+.orderCon a .tipInfo span:last-child{float: right; font-size: 0.6rem; color: #666;}
+.orderCon a img{float: left;width: 2.975rem; height: 2.0rem;}
+.orderCon a .proinfo{margin-left: 3.375rem;}
+.orderCon a .proinfo p{margin: 0;padding: 0; font-size:0.6rem; color: #4b4643;}
+.orderCon a .proinfo p:first-child{ height: 0.7rem; line-height: 0.7rem; margin: 0 0 0.3rem 0; overflow: hidden;}
+.orderCon a .proinfo p span{display: block; float: left; font-size: 0.6rem; color: #999;}
+.orderCon a .proinfo p span:last-child{float: right; color: #e25d39;}
+.orderCon a .proinfo p span.newDec{color: #1aa9b9;}
+
+.protip {line-height: 20px;padding: 10px 10px;background-color: #fff;font-size: 13px;font-weight: bold;color: #716f6f;border-top: #e8e8e8 1px solid;border-bottom: #e8e8e8 1px solid; text-align:center;}
+.protip  a{ color: #1aa9b9;}

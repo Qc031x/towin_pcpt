@@ -1,0 +1,116 @@
+package com.sgfm.datacenter.action.user;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.sgfm.base.action.BaseAction;
+import com.sgfm.datacenter.SysConstant;
+import com.sgfm.datacenter.entity.TMember;
+import com.sgfm.datacenter.exception.AppException;
+import com.sgfm.datacenter.service.user.UserService;
+import com.sgfm.datacenter.util.JsonResponseResult;
+import com.sgfm.datacenter.util.SysUtils;
+
+import net.sf.json.JSONObject;
+
+@Controller
+@Scope("prototype")
+public class UserAction extends BaseAction {
+
+	private static final long serialVersionUID = 1L;
+
+	private Log logger = LogFactory.getLog(this.getClass());
+	
+	@Autowired
+	private UserService userService;
+	
+	public TMember tMember = new TMember();
+
+
+	/**
+	 * 跳转至个人中心
+	 * 
+	 * @return
+	 * @author JingZeKuan
+	 */
+	public String toPerCenPage() {
+	   try {
+		  TMember member = userService.findMemberByOpenid(tMember);
+		   
+        } catch (final AppException app) {
+            this.logger.error(app);
+        } catch (final Exception e) {
+        	e.printStackTrace();
+            this.logger.error(e);
+        }		
+		super.getRequest().setAttribute("title", "个人中心");
+		return super.toContentView("user", "perCen");
+	}
+	
+	public String findRegisterByAccount(){
+		JsonResponseResult result = null;
+        try {
+        	tMember = userService.findMemberByAccountOrMobile(tMember);				//查询是否有这个账户
+        	if (null !=tMember){
+        		result = JsonResponseResult.createFalied("该账号已被注册过！");
+        	} else{
+        		result = JsonResponseResult.createSuccess();
+        	}
+        } catch (final AppException app) {
+            this.logger.error(app);
+        } catch (final Exception e) {
+            this.logger.error(e);
+        }
+        this.logger.debug("action:" + this.jsonResult);
+        super.jsonResult = JSONObject.fromObject(result).toString();
+        return BaseAction.JSON;
+	}
+
+	public String doRegister() {
+		JsonResponseResult result = null;
+		try {
+			String pageYzm = super.getRequest().getParameter("captchas");
+			String yzm = super.getFromSession("captcha").toString();
+			if (!pageYzm.equals(yzm)) {
+				result = JsonResponseResult.createFalied("验证码输入错误!");
+				super.jsonResult = JSONObject.fromObject(result).toString();
+				return BaseAction.JSON;
+			}
+			// 防止重复注册
+			String isMember = (String) super.getFromSession(SysConstant.IS_MEMBER);
+			String openid = (String) super.getFromSession(SysConstant.OPENID);
+			TMember openidMember = userService.findMemberByOpenid(tMember);
+			if (!SysUtils.isEmpty(openidMember)) {
+				result = JsonResponseResult.createFalied("该账号已经注册过!");
+				super.jsonResult = JSONObject.fromObject(result).toString();
+			}else{
+				if(isMember.equals("1")){
+					//没有openid 注册
+					tMember.setOpenid(openid);
+					tMember.setMType(1);
+					tMember.setRegisterDate(SysUtils.getTime());
+					tMember.setLastLogin(SysUtils.getTime());
+					userService.doRegisterNewMember(tMember);
+				}else{
+					//有openid 修改
+					tMember.setOpenid(openid);
+					tMember.setMType(3);
+					tMember.setLastLogin(SysUtils.getTime());
+					userService.updMemberByOpenid(tMember);
+				}
+				super.setToSession(SysConstant.SYS_MEMBER_LOG_SUCC_INFO, tMember);
+				result = JsonResponseResult.createSuccess();
+				super.jsonResult = JSONObject.fromObject(result).toString();
+			}
+			
+		} catch (final AppException app) {
+			this.logger.error(app);
+		} catch (final Exception e) {
+			this.logger.error(e);
+		}
+		return BaseAction.JSON;
+	}
+}

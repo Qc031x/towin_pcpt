@@ -1,0 +1,85 @@
+/*棰勭害鏃ュ巻*/
+.calender {width: 100%; cursor: pointer; border:#ddd solid;border-width:1px 0; overflow: hidden; padding:0.4rem 3.2%;}
+.calender h3 { float: left; width: auto; color: #7b7b7c; line-height: 1.2rem; height: 1.2rem; padding-left:1.1rem; font-weight: normal; background: url("../images/calender.png") no-repeat left 0.125rem; font-size: 13px; background-size: 16% auto;}
+.calender p{float: left; padding-left: 5px; font-weight: normal; width: auto;  line-height: 1.2rem; color: #7b7b7c; font-size: 12px;}
+.calender i{ float: right; display: block; background: url("../images/arrdownb.png") no-repeat center center; background-size: 15px auto; width: 15px; height: 1.2rem; -webkit-transition: transform 500ms ease-in-out; transition: transform 500ms ease-in-out; -webkit-transform: rotate(0deg); transform: rotate(0deg); cursor: pointer;}
+.calender i.active{-webkit-transform: rotate(180deg);transform: rotate(180deg);}
+
+.yue_tit{width:100%; clear:both; height: 1.93rem; line-height:1.93rem; font-size:12px; text-align:center; background:#f1f1f1; border-bottom:1px #ddd solid; color:#333232; position:relative;}
+.yue_tit .riliqiean1{width:8px; height:15px; background:url(../images/riliqiean1.png) center center no-repeat; background-size: 8px auto; cursor:pointer; display:inline-block; position:absolute; top:10px; left:26.5%; overflow:hidden;}
+.yue_tit .riliqiean2{width:8px; height:15px; background:url(../images/riliqiean2.png) center center no-repeat; background-size: 8px auto; cursor:pointer; display:inline-block; position:absolute; top:10px; right:26.5%; overflow:hidden;}
+.yue_tit .riliyear{line-height:1.93rem; display:inline-block; overflow:hidden;}
+.yue_tit .riliyear .xlxzrili{line-height:1.93rem; display:inline-block; font-size: 12px; color: #333232;}
+
+.yuyue_rili{width:100%; background:#fff; overflow:hidden; display: none; z-index: 9999;}
+.yuyue_rili .fixxingqi{width:100%; overflow:hidden; height:1.5rem; line-height:1.5rem; background:#f5f5f5; border-bottom:1px #ddd solid; text-align:center; color:#9f9f9f;}
+.yuyue_rili .fixxingqi li{width:14.28%; height:1.5rem; float:left; border-right:1px #ddd solid; font-size:12px;}
+.yuyue_rili .fixxingqi li:nth-child(7n),.yuyue_rili .fixxingqi li:nth-child(7n+1),.yue_rili .yue_day li:nth-child(7n),.yue_rili .yue_day li:nth-child(7n+1){color:#FF8F00;}
+.yuyue_rili .fixxingqi li:nth-child(7n),.yue_rili .yue_day li:nth-child(7n){ border-right: none;}
+
+.yue_rili .yue_day{width:100%; clear:both; overflow:hidden; background:url(../images/rililistbigbg.png) 0 0 repeat; background-size: 100% 80px;  text-align:center;}
+.yue_rili .yue_day li{width:14.28%; height:40px; line-height:20px; font-size:10px; float:left; font-weight:bold; color:#bcbcbc; border:1px #ddd solid; border-width:0 1px 1px 0; position:relative;}
+.yue_rili .yue_day li a{width:66px; height:45px; position:absolute; top:0px; left:0px; text-align:center; background:#eee; display:none; cursor:context-menu;}
+.yue_rili .yue_day li:hover a{display:block;}
+.yue_rili .yue_day li a em{width:40px; height:20px; line-height:20px; display:inline-block; margin:10px 0 0 0; background:#00AFC7; color:#fff; border-radius:3px; cursor:pointer;}
+.yue_rili .yue_day li a em:hover{background:#FF8F00;}
+
+
+.yue_rili .yue_day li.over{color:#999; line-height:2rem;}
+.yue_rili .yue_day li.today{color:#bcbcbc; background: url("../images/today.png") no-repeat right bottom; background-size: 20% auto;}
+.yue_rili .yue_day li span{font-weight:normal; font-size:12px;}
+.yue_rili .yue_day li span.zt1{color:#00AFC7;}  /*  鍙害  */
+.yue_rili .yue_day li span.zt2{color:#FF8F00;}  /*  宸叉弧锛屽亣鏃ワ紝浼戞伅锛屾殏鍋滈绾� */
+
+
+/*鏃ュ巻鑳屾櫙*/
+.calenderbox{width: 100%; display: block; position: fixed; top: 0; bottom: 0; left: 0; right: 0; max-width: 640px; min-width: 320px; margin: 0 auto; z-index: 9998; display: none;}
+.calenderbox .calenderbg{ position: absolute; bottom: 0; top: 0; left: 0; right: 0; background-color: rgba(0, 0, 0, 0.5); cursor: pointer;}
+.calenderadss{position: absolute; bottom: 1.95rem;}
+.calenderbox .cancel{width: 100%; line-height: 2rem; text-align: center; background-color: #F5F5F5; height: 2rem; font-size: 0.7rem; position: absolute; bottom: 0;}
+
+
+/*浜у搧灞曠ず*/
+.ornament{ overflow: hidden; height: auto; background-color:#FFF; padding:.6rem 3.2%; position:relative;border-bottom:1px solid #DDD;}
+.ornament .ornament_img{ float:left; width:5.25rem;height:3.25rem; margin:0; overflow:hidden;}
+.ornament .ornament_img img{ width:5.25rem;height:3.25rem;}
+.ornament .info{width: auto; height: auto; line-height:3.3rem; margin:0 0 0 5.8rem; position: relative;overflow: hidden;}
+.ornament .info h1{ margin:0; padding:0; font-size:13px;line-height: 1.5; color:#656565; overflow: hidden; word-break: keep-all; white-space: nowrap; text-overflow: ellipsis}
+.ornament .info p{margin:0; color:#999999; font-size: 10px;padding:0;line-height:1.9;}
+.ornament .info p b{ color:#ff1302; font-size:14px;margin-right:7px; padding-left: 9px; background: url("../images/money.png") no-repeat left center; background-size: 7px auto;}
+.ornament .info p span{ width: 50px; height: 18px;; background: #f36060; border-radius: 3px 0 0 3px; text-align: center; line-height: 18px; color: #fff; display: inline-block;}
+.ornament .info p .obg{ width: 60px; background: #ff8f00; border-radius: 3px;}
+.ornament .info p em{ color: #716f6f; height: 18px; text-align: center; width: 50px;  line-height: 18px; display: inline-block;border-radius: 0 3px 3px 0;background-color: #e3e3e3;}
+.ornament .info p em i{color: #f36060;}
+
+
+/*鏍囬*/
+.protip{ line-height: 20px; padding: 10px 10px; background-color: #fff; font-size: 13px; font-weight: bold; color: #716f6f; border-top: #e8e8e8 1px solid; border-bottom: #e8e8e8 1px solid;}
+.peobox{ background-color: #fff; font-size: 12px; color: #716f6f; line-height: 20px; border-top: #e8e8e8 1px solid;}
+.peobox p{ margin: 0; padding: 5px 10px; border-bottom: #e8e8e8 2px solid; font-size: 13px;}
+.peobox p i{ float: left; overflow: hidden; height: 40px; line-height: 40px; vertical-align: top;}
+.peobox p b{ display: table-cell; width: 1000px; font-weight: normal; position: relative;}
+.peobox p input{ display: inline-block; border: none; width: 100%; color: #4b4643; font-size: 12px; outline: 0; border-radius: 0; -webkit-appearance: none; line-height: 20px; margin: 10px 0;}
+.peobox p b span{ line-height: 39px; margin-left: 3px; margin-right: 10px; padding: 13px 10px 13px 20px; background: url(../images/tjkradio1.png) 0 13px no-repeat; background-size: 15px;}
+.peobox p b span.active{ background: url(../images/tjkradio.png) 0 13px no-repeat; background-size: 15px;}
+.peobox .errme{ z-index: 999; top: 2.5rem; width: 100%; right: 0; display: none; position: fixed; height: auto; line-height: 1.5rem; background-color: #eee; font-size: 0.6rem; color: #f36060; text-align: center;}
+.peobox p select{ display: inline-block; border: none; width: 100%; color: #4b4643; font-size: 12px; outline: 0; border-radius: 0; -webkit-appearance: none; height: 40px; background: url(../images/arrdownb.png) right center no-repeat; background-size: 15px auto;}
+.peobox p .input1{ display: inline-block; width: 100%; color: #a9a9a9; font-size: 12px; background: url(../images/calender.png) right center no-repeat; background-size: 20px auto;}
+.peobox .getver{ position: absolute; right: 5px; top: 3px; background-color: #ff8f00; color: #fff; padding: 8px 5px; margin-right: 0; border-radius: 5px; font-size: 12px;}
+.peobox .getverbg{ background-color: #ccc; color: #999;}
+/*.peobox p .marleft{ margin: 0 0 0 -5px;}*/
+
+
+
+.allpaybox{line-height:50px;background:#fff;overflow:hidden; position: fixed;bottom: 0;width: 100%;max-width: 640px; font-size: 13px; color: #716f6f;}
+.slidebox{ overflow: hidden; height: 124px;}
+.allpay{ line-height:24px;border-top:1px solid #eee;padding:5px 10px; overflow:hidden;}
+.allpay .fl{width:50%; display:block; float: left;}
+.allpay .fr{width:50%; display:block; text-align:right;float:right;color:#f96363;font-size: 14px;}
+.allpaybox .fixpay{width:65%; text-indent:10px;float:left; font-size: 13px; line-height: 37px; color: #716f6f; border: 1px solid #e25d39; border-width: 1px 0;}
+.allpaybox .fixpay img{float:right; width: 6px; margin: 15px 15px 0 0; -webkit-transition: transform 500ms ease-in-out; transition: transform 500ms ease-in-out; -webkit-transform: rotate(0deg); transform: rotate(0deg);}
+.allpaybox .fixpay img.active{-webkit-transform: rotate(90deg);transform: rotate(90deg);}
+.allpaybox .fixpay em{color:#f96363;font-size:16px; font-style: normal; line-height: 37px;}
+.allpaybox .btn{width:35%; display:block;float:right; text-align:center; background:#e25d39;color:#fff;line-height: 40px; font-size: 17px;}
+
+.bottomblank2{height: 40px; width: 100%;}

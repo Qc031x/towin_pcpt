@@ -1,0 +1,249 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<%@include file="/WEB-INF/content/public/tags.jsp" %>
+    <title>体检机构列表</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name = "format-detection" content = "telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript" src="/js/rem.js"></script>
+    
+
+    <link rel="stylesheet" href="/css/public.css"/>
+    <link rel="stylesheet" href="/css/jigou_list.css"/>
+    
+    <!-- 加载更多组件 -->
+	<script type="text/javaScript" src="/js/jsrender.js"></script>
+	<script type="text/javaScript" src="/js/cacheJs/shopCacheControl.js"></script>
+	<script type="text/javascript" src="/js/commonLib.js"></script>
+  	
+    <script>
+        $(function(){
+            countyId = '${cgVariable.countyid}';
+            if(''!=countyId) $("#searchArea").html($("#qy"+countyId).html());
+            
+            categoryId = '${cgVariable.categoryidFour}';
+            if(''!=categoryId) $("#searchYiyuan").html($("#lb"+categoryId).html());
+            
+            paixu = '${cgVariable.paixu}';
+            if(''!=paixu) $("#searchPaixu").html($("#"+paixu.substring(0,7)).html());
+            
+            distance = '${distance}';
+            if('1' == distance) {
+            	$(".nav_distance").addClass("active");
+            }
+            
+        	ajaxLoadList(${medList},"entityShop","jigouInfo",$("#jigouInfoUl"),'${pages.totalPages}',"/core/shop.ajaxMedLoadMore.do",'${pages.totalRows}');
+            $(".header_right").click(function(){
+                $(this).children().toggleClass("rbgchange");
+                $(".linklist").slideToggle(200).css("position","fixed");
+            });
+            var idx = 0;
+            $(".sel").click(function () {
+//                   $("body").css("overflow", "hidden").css("height","100%");
+                if ($(".sel.active").index() == $(this).index()) {
+                    if ($(".filter-container").height() > 0) {
+                        $(this).removeClass("active");
+                    } else {
+                        $(this).addClass("active");
+                    }
+                    if (idx==0) {
+                        $(this).removeClass("active");
+                        idx++;
+                    } else if(idx==1){
+                        $(this).addClass("active");
+                        idx--;
+                    }
+                } else {
+                    $(".sel.active").removeClass("active");
+                    $(this).addClass("active");
+                    if(idx==1)idx--;
+                }
+                var f = $(this).index();
+                if ($(".filter-container").children().eq(f).is(":visible")) {
+                    $(".filter-cont_mask").hide();
+                    $(".filter-container").children().eq(f).slideUp(500);
+                }else {
+                    $(".filter-container").children().eq(f).siblings().slideUp(200);
+                    $(".filter-container").children().eq(f).slideDown(500);
+                    $(".filter-cont_mask").css("overflow","auto").show();
+                }
+                if(f==3){
+                    $(".filter-cont_mask").hide();
+                    $(".filter-container").children().hide();
+                };
+            });
+
+            $(".nav_distance").click(function(){
+            	if(distance == 0){
+	            	$(this).addClass("active");
+	            	distance = 1;
+            	} else {
+            		$(this).removeClass("active");
+	            	distance = 0;
+            	}
+            	goSearchss("distance", distance);
+            });
+            
+            $(".filter-cont_mask").click(function(){
+                $(this).hide();
+                $(".filter-container").children().slideUp(500);
+                $(".sel.active").removeClass("active");
+            });
+            //alert(countyid+"-"+categoryId+"-"+paixu)
+            
+        });
+        
+        function goSearchss(key,val){
+        	if("countyId" == key) countyId = val;
+        	if("categoryId" == key) categoryId = val;
+        	if("paixu" == key) paixu = val;
+        	if("distance" == key) distance = val;
+        	window.location.href="/core/shop.toEntityShopListPage.do?cgVariable.countyid="+countyId+"&cgVariable.categoryidFour="+categoryId+"&cgVariable.paixu="+paixu+"&distance="+distance;
+        }
+        
+        function goMECDetail(pageType, esid){
+        	window.location.href= "/core/shop.toBranchDetails.do?esid="+esid;
+        }
+    </script>
+</head>
+<body>
+<div id="main" class="main" style="height: auto;">
+    <div class="header">
+
+        <div class="header_left">
+            <a href="/">返回</a>
+        </div>
+        <div class="header_midd">
+            <span class="activeR"><a href="/core/shop.toEntityShopListPage.do" >体检机构</a></span>
+            <span><a href="/core/product.toProductListPage.do" >体检套餐</a></span>
+        </div>
+        <div class="header_right" onclick="changeMenu()">
+            <div class="header_rbg"></div>
+               <span>导航</span>
+        </div>
+    </div>
+
+    <%@include file="/WEB-INF/content/public/top_menu.jsp" %>
+
+    <div class="nav">
+        <div class="navcon">
+            <ul>
+                <li class="nav_qc sel">
+                    <a href="javascript:void(0)" id="searchArea">${cityname_revpt}</a>
+                    <img src="/images/nav_down.png" alt=""/>
+                </li>
+                <li class="nav_yiyuan sel">
+                    <a href="javascript:void(0)" id="searchYiyuan">全部医院</a>
+                    <img src="/images/nav_down.png" alt=""/>
+                </li>
+                <li class="nav_paixu sel">
+                    <a href="javascript:void(0)" id="searchPaixu">综合排序</a>
+                    <img src="/images/nav_down.png" alt=""/>
+                </li>
+                <li class="nav_distance">
+                    <a href="javascript:void(0)">离我最近</a>
+                    <img src="/images/nav_down.png" alt=""/>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="filter-cont_mask"></div>
+    <div class="filter-container">
+        <div class="area_box_qc">
+            <div class="area_box">
+                <div class="area_box_list left_side">
+                    <ul>
+                        <li class="current"><a href="javascript:;">区域</a></li>
+                        <li class="" onclick="goSearchss('countyId','')"><a href="#">全市</a></li>
+                        <c:forEach items="${countryList}" var="mapItem">
+                        	<li class="" onclick="goSearchss('countyId','${mapItem['COUNTRYID']}')" id="qy${mapItem['COUNTRYID']}" tjz="${mapItem['COUNTRYID']}"><a href="#" class="hopsid">${mapItem['COUNTRY']}</a> </li>
+                        </c:forEach>
+                    </ul>
+                    <input id="countyId" type="hidden" value="${cgVariable.countyid}" />
+                </div>
+            </div>
+        </div>
+        <div class="area_box_yiyuan">
+            <div class="area_box">
+                <div class="area_box_list left_side" style="height: auto;">
+                    <ul>
+                        <li class="current"><a href="#">医院级别</a></li>
+                        <li class="" onclick="goSearchss('categoryId','')"><a href="#">全部</a></li>
+                        <c:forEach items="${branchTypeList}" var="mapItem">
+		        			<li class="" onclick="goSearchss('categoryId','${mapItem['KEY']}')" id="lb${mapItem['KEY']}" tjz="${mapItem['KEY']}"><a href="#" class="hopsid">${mapItem['NAME']}</a> </li>
+                        </c:forEach>
+                    </ul>
+                    <input id="categoryId" type="hidden" value="${cgVariable.categoryidFour}" />
+                </div>
+            </div>
+        </div>
+        <div class="area_box_paixu">
+            <div class="area_box">
+                <div class="area_box_list left_side" style="height: auto;">
+                    <ul>
+                        <li class="current"><a href="#">排序</a></li>
+                        <li class="" onclick="goSearchss('paixu','')"><a href="#">综合排序</a></li>
+                        <li class="" onclick="goSearchss('paixu','countssdesc')"><a href="#" id="countss">预约量</a></li>
+                        <li class="" onclick="goSearchss('paixu','commentdesc')"><a href="#" id="comment">评论</a></li>
+                    </ul>
+            		<input type="hidden" id="paixu" value="${cgVariable.paixu}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="height:1.8rem;width:100%;"></div>
+    <div class="weizhi">
+        <div class="wz_bread">
+            <a href="">${sessionScope.CITY}-${sessionScope.DISTRICT}-${sessionScope.ADDRESS}</a>
+        </div>
+    </div>
+    
+    <div class="tjjg_list">
+        <ul class="jigou_list" id="jigouInfoUl">
+        
+        </ul>
+        
+        <script id="jigouInfo" type="text/x-jsrender">
+			 {{for}}
+				<li class="jigou_list_con" onclick="goMECDetail('introduce', {{:ESID}})">
+            		<input type="hidden" id="currentPage" value="1"/>
+            	<div class="jigou_img">
+					<img src="${ctxImg}/shop/{{:CSID}}/{{:ESID}}/{{:IMG}}" onerror="this.src='/images/default_img.png'"/>
+                </div>
+                <div class="jigou_intro">
+                    <div class="jg_inro1">【{{:BNAME}}】{{:ENAME}}</div>
+                    <div class="jg_inro2">{{:TYPENAME}}</div>
+                    <div class="jg_inro3">
+                        <span>{{:DISTANCE}}<em>km</em></span>
+                        <span>{{:COUNTYNAME}}</span>
+						{{if MINPRICE != 0}}
+							<span>{{:MINPRICE}}1000元起</span>
+						{{else}}
+							<span></span>
+		                {{else}}
+		                {{/if}}
+                    </div>
+                </div>
+            </li>
+			 {{/for}}
+		</script>
+        
+	 <div class="loadMore" onclick='clickMoreData()' loads="1">
+            <span>点击加载更多</span>
+        </div>
+    </div>
+    </div>
+</div>
+
+    <%@include file="/WEB-INF/content/public/footer.jsp" %>
+
+</body>
+</html>

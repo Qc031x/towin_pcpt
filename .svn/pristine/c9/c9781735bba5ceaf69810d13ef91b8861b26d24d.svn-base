@@ -1,0 +1,40 @@
+package com.sgfm.datacenter;
+
+public class MsgConstant {
+
+	/**
+	 * 短信签名：天问医疗
+	 */
+	public static final String SIGN_TIANWEN_YILIAO = "天问医疗";
+	
+	/**
+	 * 短信签名: 大鱼测试
+	 */
+	public static final String SIGN_SYS_DAYUTEST = "大鱼测试";
+	
+	/**
+	 * 短信模板：通知员工体检模板编号
+	 * 
+	 * 尊敬的${name}，贵司${com}为您安排了员工体检。请关注天天问康微信公众号，选择体检套餐并预约体检
+	 */
+	public static final String TMPL_NOTIFY_CHECKUP = "SMS_50330020";
+	
+	/**
+	 * 短信测试模板:
+	 */
+	public static final String TMPL_NOTIFY_TEST = "SMS_49430300";
+	
+	/**
+	 * 短信模板:员工体检完毕获取报告
+	 * 
+	 * 尊敬的${name}，您已经在${shopname}做了体检，请关注天天问康微信公众号，查看体检报告
+	 */
+	public static final String TMPL_RESERVEVATION_REPORT = "SMS_50245065";
+	
+	/**
+	 * 短信模板:员工预约体检后通知
+	 * 
+	 * 尊敬的${name}，您已经预约了 ${date}的体检，体检分院地址是${address}。请准时体检。
+	 */
+	public static final String TMPL_RESERVATION_NOTIFY = "SMS_50355019";
+}

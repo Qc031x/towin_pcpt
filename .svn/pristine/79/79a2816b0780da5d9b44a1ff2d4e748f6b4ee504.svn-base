@@ -1,0 +1,178 @@
+package com.tencent.business;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.tencent.protocol.order.ScanAddOrderReqData;
+import com.tencent.service.ScanPayService;
+
+/**
+ * User: rizenguo
+ * Date: 2014/12/1
+ * Time: 17:05
+ */
+public class ScanPayBusiness {
+	  private Log logger = LogFactory.getLog(this.getClass()); 
+    public ScanPayBusiness() throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+        scanPayService = new ScanPayService();
+        //scanPayQueryService = new ScanPayQueryService();
+        //reverseService = new ReverseService();
+    }
+
+    public interface ResultListener {
+/*
+        //API返回ReturnCode不合法，支付请求逻辑错误，请仔细检测传过去的每一个参数是否合法，或是看API能否被正常访问
+        void onFailByReturnCodeError(ScanPayResData scanPayResData);
+
+        //API返回ReturnCode为FAIL，支付API系统返回失败，请检测Post给API的数据是否规范合法
+        void onFailByReturnCodeFail(ScanPayResData scanPayResData);
+
+        //支付请求API返回的数据签名验证失败，有可能数据被篡改了
+        void onFailBySignInvalid(ScanPayResData scanPayResData);
+
+        //查询请求API返回的数据签名验证失败，有可能数据被篡改了
+        void onFailByQuerySignInvalid(ScanPayQueryResData scanPayQueryResData);
+
+        //撤销请求API返回的数据签名验证失败，有可能数据被篡改了
+        void onFailByReverseSignInvalid(ReverseResData reverseResData);
+
+        //用户用来支付的二维码已经过期，提示收银员重新扫一下用户微信“刷卡”里面的二维码
+        void onFailByAuthCodeExpire(ScanPayResData scanPayResData);
+
+        //授权码无效，提示用户刷新一维码/二维码，之后重新扫码支付"
+        void onFailByAuthCodeInvalid(ScanPayResData scanPayResData);
+
+        //用户余额不足，换其他卡支付或是用现金支付
+        void onFailByMoneyNotEnough(ScanPayResData scanPayResData);
+
+        //支付失败
+        void onFail(ScanPayResData scanPayResData);
+
+        //支付成功
+        void onSuccess(ScanPayResData scanPayResData,String transactionID);
+*/
+    }
+   
+
+    
+    //打log用
+   // private static Log log = new Log(LoggerFactory.getLogger(ScanPayBusiness.class));
+
+    //每次调用订单查询API时的等待时间，因为当出现支付失败的时候，如果马上发起查询不一定就能查到结果，所以这里建议先等待一定时间再发起查询
+
+    private int waitingTimeBeforePayQueryServiceInvoked = 5000;
+
+    //循环调用订单查询API的次数
+    private int payQueryLoopInvokedCount = 3;
+
+    //每次调用撤销API的等待时间
+    private int waitingTimeBeforeReverseServiceInvoked = 5000;
+
+    private ScanPayService scanPayService;
+
+  
+
+    private String transactionID = "";
+
+    /**
+     * 直接执行被扫支付业务逻辑（包含最佳实践流程）
+     *
+     * @param scanPayReqData 这个数据对象里面包含了API要求提交的各种数据字段
+     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @throws Exception
+     */
+
+    public String addOrder(ScanAddOrderReqData scanPayReqData, ResultListener resultListener) throws Exception {
+
+        //--------------------------------------------------------------------
+        //构造请求“被扫支付API”所需要提交的数据
+        //--------------------------------------------------------------------
+
+        String outTradeNo = scanPayReqData.getOut_trade_no();
+
+        //接受API返回
+        String payServiceResponseString;
+
+        long costTimeStart = System.currentTimeMillis();
+
+
+       // log.i("支付API返回的数据如下：");
+        payServiceResponseString = scanPayService.request(scanPayReqData);
+
+        long costTimeEnd = System.currentTimeMillis();
+        long totalTimeCost = costTimeEnd - costTimeStart;
+        return payServiceResponseString;
+    }
+    public String getWapToken(String wapurl,ScanAddOrderReqData scanPayReqData, ResultListener resultListener) throws Exception {
+
+        //--------------------------------------------------------------------
+        //构造请求“被扫支付API”所需要提交的数据
+        //--------------------------------------------------------------------
+
+     
+
+        //接受API返回
+        String payServiceResponseString;
+
+        long costTimeStart = System.currentTimeMillis();
+        logger.info("ScanPayBusiness-》getWapToken");
+
+       // log.i("支付API返回的数据如下：");
+        payServiceResponseString = scanPayService.request2(wapurl,scanPayReqData);
+
+        long costTimeEnd = System.currentTimeMillis();
+        long totalTimeCost = costTimeEnd - costTimeStart;
+        return payServiceResponseString;
+    }
+
+    //是否需要再调一次撤销，这个值由撤销API回包的recall字段决定
+    private boolean needRecallReverse = false;
+
+    /**
+     * 进行一次撤销操作
+     *
+     * @param outTradeNo    商户系统内部的订单号,32个字符内可包含字母, [确保在商户系统唯一]
+     * @param resultListener 商户需要自己监听被扫支付业务逻辑可能触发的各种分支事件，并做好合理的响应处理
+     * @return 该订单是否支付成功
+     * @throws Exception
+     */
+
+
+
+   
+
+    /**
+     * 设置循环多次调用订单查询API的时间间隔
+     *
+     * @param duration 时间间隔，默认为10秒
+     */
+    public void setWaitingTimeBeforePayQueryServiceInvoked(int duration) {
+        waitingTimeBeforePayQueryServiceInvoked = duration;
+    }
+
+    /**
+     * 设置循环多次调用订单查询API的次数
+     *
+     * @param count 调用次数，默认为三次
+     */
+    public void setPayQueryLoopInvokedCount(int count) {
+        payQueryLoopInvokedCount = count;
+    }
+
+    /**
+     * 设置循环多次调用撤销API的时间间隔
+     *
+     * @param duration 时间间隔，默认为5秒
+     */
+    public void setWaitingTimeBeforeReverseServiceInvoked(int duration) {
+        waitingTimeBeforeReverseServiceInvoked = duration;
+    }
+
+    public void setScanPayService(ScanPayService service) {
+        scanPayService = service;
+    }
+
+ 
+
+}
+

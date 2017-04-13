@@ -1,0 +1,256 @@
+
+package com.sgfm.datacenter.service.reservation.impl;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sgfm.datacenter.dao.product.RlDao;
+import com.sgfm.datacenter.dao.reservation.ReservationDao;
+import com.sgfm.datacenter.service.reservation.ReservationService;
+
+/** 
+ * @author cxj
+ * @date 2016-11-3 上午10:21:44
+ */
+@Service
+public class ReservationServiceImpl implements ReservationService {
+
+	@Autowired
+	private ReservationDao reservationDao;
+	
+	@Autowired
+	private RlDao rlDao;
+	
+//	@Override
+//	public HashMap<String, Object> findReservationInfoByMid(Map<String, Object> param) {
+//		HashMap<String,Object> info = new HashMap<String,Object>(4);
+//		List<HashMap<String,Object>> list = reservationDao.findReservationByMid(param);
+//		for(int i=0,size=list.size(); i < size; i++){
+//			HashMap<String, Object> baseInfo = CommHashMap.getProductHashMaps(MemcachedConstant.YY_PRODUCT+list.get(i).get("PID").toString());
+//			if (baseInfo.size()!=0 && "4".equals(baseInfo.get("SERVICE_GOODS").toString())){
+//				System.out.println(baseInfo.get("SERVICE_GOODS"));
+//				baseInfo.put("IMG", CommHashMap.getTemplate(MemcachedConstant.SC_MEDICALCARDTEMPLATE + list.get(i).get("PID").toString()));
+//			}
+//			list.get(i).put("base", baseInfo);
+//		}
+//		info.put("list",list);
+//		return info;
+//	}
+//
+//
+//	@Override
+//	public HashMap<String, Object> findReservationInfo(Map<String, Object> param) {
+//		return reservationDao.findReservationInfo(param);
+//	}
+//
+//
+//	@Override
+//	public HashMap<String, Object> findOnlinePayReservationInfo(Map<String, Object> param) {
+//		return reservationDao.findOnlinePayReservationInfo(param);
+//	}
+//
+//
+//	@Override
+//	public HashMap<String, Object> findGroupbuyReservationInfo(Map<String, Object> param) {
+//		return reservationDao.findGroupbuyReservationInfo(param);
+//	}
+//
+//
+//	@Override
+//	public HashMap<String, Object> findShopPayReservationInfo(Map<String, Object> param) {
+//		return reservationDao.findShopPayReservationInfo(param);
+//	}
+//
+//	@Override
+//	public Map<String, Object> getReservationInfoForUpdate(TProductAttr tProductAttr) {
+//		Map<String,Object> info = new HashMap<String,Object>();
+//		List<HashMap<String,Object>> reservationList = reservationDao.findReservationRelativeInfo(tProductAttr);
+//		Map<String,String> cityMap = new HashMap<String,String>();// 城市(key为城市id，value为城市名)
+//		Map<String,String> hospitalCity = new HashMap<String,String>();// 分院/城市(key为分院id，value为城市id)
+//		Map<String,String> hospitalName = new HashMap<String,String>();// 分院名(key为分院id，value为分院名)
+//		Map<String,String> esidAndAddress = new HashMap<String,String>();
+//		for (HashMap<String,Object> m : reservationList) {
+//			cityMap.put(m.get("ID").toString(), m.get("TITLE").toString().replace("市", ""));
+//			hospitalCity.put(m.get("ESID").toString(), m.get("ID").toString());
+//			hospitalName.put(m.get("ESID").toString(), new StringBuilder("[").append(m.get("BRANDNAME")).append("]").append(m.get("CNAME")).toString());
+//			esidAndAddress.put(m.get("ESID").toString(), m.get("ADDRESS").toString());
+//		}
+//		info.put("cityMap", cityMap);
+//		info.put("hospitalCity", hospitalCity);
+//		info.put("hospitalName", hospitalName);
+//		info.put("esidAndAddress", esidAndAddress);
+//		return info;
+//	}
+//
+//	@Override
+//	public int updateCardReservation(TReservation tReservation) {
+//		int result = reservationDao.updateTreservation(tReservation);
+//		if(("X").equals(tReservation.getCard().substring(0,1))){
+//			reservationDao.updatePorderLineIsValid(tReservation);
+//		}else{
+//			reservationDao.updateGiftbookIsValid(tReservation);
+//		}
+//		return result;
+//	}
+//	
+//	@Override
+//	public HashMap<String, Object> findSReservationByRid(String rid) {
+//		return reservationDao.findSReservationByRid(rid);
+//	}
+//
+//	
+//	/**
+//	 */
+//	public int updateSreservation(SReservation sreservation){
+//		return reservationDao.updateSreservation(sreservation);
+//		
+//	}
+//
+//	@Override
+//	public int updateGroupbuyReservation(SGroupbuyReservation gReservation) {
+//		return reservationDao.updateGroupbuyReservation(gReservation);
+//	}
+//	
+//	
+//	public String checkCard(TReservation reservation){
+//		String result = "-999";
+//		
+//		HashMap<String, Object> infoMap = null;
+//		
+//		switch (reservation.getCard().length()) {
+//		case 10:
+//			infoMap = reservationDao.findVValidInfoByCardInfo(reservation);
+//			break;
+//		case 12:
+//			infoMap = reservationDao.findEValidInfoByCardInfo(reservation);
+//			break;
+//		case 13:
+//			infoMap = reservationDao.findEValidInfoByCardInfo(reservation);
+//			break;
+//		case 14:
+//			if(reservation.getCard().indexOf("YK") > -1){
+//				infoMap = reservationDao.findSELPTYKValidInfoByCardInfo(reservation);
+//			}else{
+//				infoMap = reservationDao.findSELPTValidInfoByCardInfo(reservation);
+//			}
+//			break;
+//		}
+//		
+//		if(infoMap != null && infoMap.size() > 0){
+//			String active = infoMap.get("JH") == null ? "0" : infoMap.get("JH").toString();
+//			String valid = infoMap.get("IS_VALID") == null ? "0" : infoMap.get("IS_VALID").toString();
+//			String alive = infoMap.get("ALIVE") == null ? "0" : infoMap.get("ALIVE").toString();
+//			String proType = infoMap.get("TYPE") == null ? "1" : infoMap.get("TYPE").toString().trim();
+//			String is_send = infoMap.get("IS_SEND") == null ? "1" : infoMap.get("IS_SEND").toString().trim();
+//			String count = infoMap.get("COUNT") == null ? "0" : infoMap.get("COUNT").toString();
+//			if(active.equals("1") && !is_send.equals("0")){
+//				if(valid.equals("0")){
+//					if((alive.equals("1") && "1".equals(proType)) || proType.equals("2")){
+//						if(!count.equals("0")){
+//							result = "0" + infoMap.get("PID").toString();
+//						}else{
+//							result = "5";//未找到匹配门店
+//						}
+//					}else{
+//						result = "4";//商品下架
+//					}
+//				}else{
+//					result = "3";//已使用
+//				}
+//			}else{
+//				result = "2";//未激活
+//			}
+//		}else{
+//			result = "1";//卡号卡密错误
+//		}
+//		
+//		return result;
+//	}
+//	
+//	public HashMap<String, Object> toReFromUsercenter(HashMap<String, Object> map){
+//		TReservation reservation = (TReservation) map.get("reservation");
+//		String card = reservation.getCard();
+//		//String password = reservation.getPassword();
+//		String pid = String.valueOf(reservation.getPid());
+//		
+//		HashMap<String, Object> product = CommHashMap.getProductHashMaps(MemcachedConstant.YY_PRODUCT + pid);
+//		List<HashMap<String, Object>> attr = CommHashMap.getHashMapAttrList(MemcachedConstant.YY_ATTR + pid);
+//		List<HashMap<String, Object>> list = CommHashMap.getHashMapBranchByPidList(MemcachedConstant.YY_BRANCH_PID + pid);
+//		
+//		HashMap<String, Object> infoMap = linkAgeControl(list);
+//		
+//		infoMap.put("type", card.length() < 14 ? "0" : "1");
+//		infoMap.put("product", product);
+//		infoMap.put("attr", attr);
+//		return infoMap;
+//	}
+//	
+//	public HashMap<String, Object> linkAgeControl(List<HashMap<String, Object>> list){
+//		HashMap<String, Object> map = new HashMap<String, Object>();
+//		
+//		//城市map
+//		Map<String, String> areaMap = new LinkedHashMap<String, String>();
+//		//门店ID 城市ID map
+//		Map<String, String> medicalMap = new LinkedHashMap<String, String>();
+//		//门店ID 门店信息map
+//		Map<String, String> tempMap = new LinkedHashMap<String, String>();
+//		//门店ID 门店地址map
+//		Map<String, String> addressMap = new LinkedHashMap<String, String>();
+//		
+//		for (int i = 0; i < list.size(); i++) {
+//			String name = list.get(i).get("NAME") == null ? "" : list.get(i).get("NAME").toString();
+//			name = name.indexOf("（") > -1 ? name.substring(0, name.indexOf("（")) : name;
+//			String address = list.get(i).get("PROVINCE").toString() + list.get(i).get("CITY").toString() + "市" + list.get(i).get("COUNTY").toString() + list.get(i).get("ADDRESS").toString();
+//			areaMap.put(list.get(i).get("ID").toString(), list.get(i).get("CITY").toString());
+//			tempMap.put(list.get(i).get("ESID").toString(), list.get(i).get("ID").toString());
+//			medicalMap.put(list.get(i).get("ESID").toString(), name);
+//			addressMap.put(list.get(i).get("ESID").toString(), address);
+//		}
+//		
+//		map.put("areaMap", areaMap);
+//		map.put("medicals", JSONArray.fromObject(medicalMap).toString());
+//		map.put("temp", JSONArray.fromObject(tempMap).toString());
+//		map.put("address", JSONArray.fromObject(addressMap).toString());
+//		return map;
+//	}
+//	
+//	public boolean doCreateNewReservation(TReservation tr){
+//		Map<String, Object> calMap = new HashMap<String, Object>();
+//		calMap.put("day", tr.getCreaterTime());
+//		calMap.put("esid", tr.getEsid());
+//		calMap.put("count", 1);
+//		String personCount = rlDao.findSingleDateCount(calMap);//可约人数
+//		if(!StringUtil.isBlank(personCount))if(Integer.parseInt(personCount) < 1) return false;
+//		if(tr.getCard().length() < 14){
+//			HashMap<String, Object> ridX = reservationDao.checkMallCardIsReve(tr.getCard());
+//			if (!SysUtils.isEmpty(ridX)){
+//				tr.setRid(Integer.parseInt(ridX.get("RID").toString()));
+//				//查看是否是被已驳回状态，如果是被驳回而重新预约则修改订单项和预约表
+//				reservationDao.updateTreservation(tr);	
+//			} else {
+//				reservationDao.addTreservation(tr);
+//			}
+//			if(tr.getCard().indexOf("X") > -1){
+//				reservationDao.updateOrderItemStatus(tr);
+//			}else{
+//				reservationDao.updateTGiftBookCardStatus(tr);
+//			}
+//		}else{
+//			HashMap<String, Object> isRevYK = reservationDao.checkSaleCardIsReve(tr.getCard());
+//			if (!SysUtils.isEmpty(isRevYK)){
+//				tr.setRid(Integer.parseInt(isRevYK.get("RID").toString()));
+//				reservationDao.updateSGroupbuyReservation(tr);
+//			} else {
+//				reservationDao.addSGroupbuyReservation(tr);
+//			}
+//			if(tr.getCard().indexOf("YK") > -1){
+//				reservationDao.updateYKMedicalCardStatus(tr);
+//			}else{
+//				reservationDao.updateMedicalCardStatus(tr);
+//			}
+//		}
+//		if(!StringUtil.isBlank(personCount)) rlDao.updateSingleDateCount(calMap);
+//		return true;
+//	}
+}

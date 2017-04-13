@@ -1,0 +1,277 @@
+package com.sgfm.datacenter.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+
+/**
+ * The persistent class for the S_RESERVATION database table.
+ * 
+ */
+@Entity
+@Table(name="S_RESERVATION")
+@NamedQuery(name="SReservation.findAll", query="SELECT s FROM SReservation s")
+public class SReservation implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private long rid;
+
+	private String createrTime;
+
+	private Integer csid;
+
+	private Integer docReports;
+
+	private Integer esid;
+
+	private Integer isVip;
+
+	private Integer mid;
+
+	private String olid;
+
+	private String pName;
+
+	private Integer paperReports;
+
+	private Integer pid;
+
+	private String postDate;
+
+	private Integer rType;
+
+	private String reCid;
+
+	private Integer reMarriage;
+
+	private String reName;
+
+	private Integer reSex;
+
+	private String reTel;
+
+	private String reYear;
+
+	private String shDate;
+
+	private Integer status;
+
+	private String updateTime;
+
+	private String updateUserid;
+	
+	private String card;
+	
+	private String password;
+
+	public SReservation() {
+	}
+
+	public long getRid() {
+		return this.rid;
+	}
+
+	public void setRid(long rid) {
+		this.rid = rid;
+	}
+
+	public String getCreaterTime() {
+		return this.createrTime;
+	}
+
+	public void setCreaterTime(String createrTime) {
+		this.createrTime = createrTime;
+	}
+
+	public Integer getCsid() {
+		return this.csid;
+	}
+
+	public void setCsid(Integer csid) {
+		this.csid = csid;
+	}
+
+	public Integer getDocReports() {
+		return this.docReports;
+	}
+
+	public void setDocReports(Integer docReports) {
+		this.docReports = docReports;
+	}
+
+	public Integer getEsid() {
+		return this.esid;
+	}
+
+	public void setEsid(Integer esid) {
+		this.esid = esid;
+	}
+
+	public Integer getIsVip() {
+		return this.isVip;
+	}
+
+	public void setIsVip(Integer isVip) {
+		this.isVip = isVip;
+	}
+
+	public Integer getMid() {
+		return this.mid;
+	}
+
+	public void setMid(Integer mid) {
+		this.mid = mid;
+	}
+
+	public String getOlid() {
+		return this.olid;
+	}
+
+	public void setOlid(String olid) {
+		this.olid = olid;
+	}
+
+	public String getPName() {
+		return this.pName;
+	}
+
+	public void setPName(String pName) {
+		this.pName = pName;
+	}
+
+	public Integer getPaperReports() {
+		return this.paperReports;
+	}
+
+	public void setPaperReports(Integer paperReports) {
+		this.paperReports = paperReports;
+	}
+
+	public Integer getPid() {
+		return this.pid;
+	}
+
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+
+	public String getPostDate() {
+		return this.postDate;
+	}
+
+	public void setPostDate(String postDate) {
+		this.postDate = postDate;
+	}
+
+	public Integer getRType() {
+		return this.rType;
+	}
+
+	public void setRType(Integer rType) {
+		this.rType = rType;
+	}
+
+	public String getReCid() {
+		return this.reCid;
+	}
+
+	public void setReCid(String reCid) {
+		this.reCid = reCid;
+	}
+
+	public Integer getReMarriage() {
+		return this.reMarriage;
+	}
+
+	public void setReMarriage(Integer reMarriage) {
+		this.reMarriage = reMarriage;
+	}
+
+	public String getReName() {
+		return this.reName;
+	}
+
+	public void setReName(String reName) {
+		this.reName = reName;
+	}
+
+	public Integer getReSex() {
+		return this.reSex;
+	}
+
+	public void setReSex(Integer reSex) {
+		this.reSex = reSex;
+	}
+
+	public String getReTel() {
+		return this.reTel;
+	}
+
+	public void setReTel(String reTel) {
+		this.reTel = reTel;
+	}
+
+	public String getReYear() {
+		return this.reYear;
+	}
+
+	public void setReYear(String reYear) {
+		this.reYear = reYear;
+	}
+
+	public String getShDate() {
+		return this.shDate;
+	}
+
+	public void setShDate(String shDate) {
+		this.shDate = shDate;
+	}
+
+	public Integer getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getUpdateTime() {
+		return this.updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getUpdateUserid() {
+		return this.updateUserid;
+	}
+
+	public void setUpdateUserid(String updateUserid) {
+		this.updateUserid = updateUserid;
+	}
+	
+	public String getCard() {
+		return card;
+	}
+
+	public void setCard(String card) {
+		this.card = card;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+}

@@ -1,0 +1,108 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<link rel="shortcut icon" href="/images/icon.ico" />
+		<link href="/css/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
+		<link href="/css/sgfmform.css" rel="stylesheet" type="text/css" />
+		<link href="/css/flavr/flavr.css" rel="stylesheet" type="text/css" />
+		<link href="/css/login.css" rel="stylesheet" type="text/css"  />
+		<script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<div class="outer-wrap">
+			<div class="login-panel">
+				<img src="/images/logo2.png" class="logo" />
+				<img src="/images/logo-img.png" class="logo-img" />
+				<h2>天问医疗服务管理平台-医生(机构)端</h2>
+				<form id="loginForm">
+				<dl class="login-layout">
+					<dt>
+						<i>帐 号</i>
+						<input type="text" class="form-control login-user" id="account" name="thospitalInneruser.loginName" datatype="*" nullmsg="请输入用户名">
+						<span class="Validform_checktip" ></span>
+					</dt>
+					<dt>
+						<i>密 码</i>
+						<input type="password" class="form-control login-psd" id="password" name="thospitalInneruser.loginPwd" datatype="*6-16" nullmsg="请输入密码" errmsg="密码为6-16位">
+						<span class="Validform_checktip" ></span>
+					</dt>
+					<dt class="dt-num">
+						<img src="/loginLicence" id="authCode" />
+						<a class="changeyzm" href="javascript:;" onclick="changeImg()" style="color: #333;text-decoration: none;">换一张</a>
+					</dt>
+					<dt class="dt-code" style="margin-right: 50px;">
+						<i>验证码</i>
+						<input type="text" class="form-control login-code" style="width:50%;" accept="number" id="yzm" name="yzm" maxlength="4" datatype="\d{4}" nullmsg="请输入验证码" errormsg="请输入左图数字">
+						<span class="Validform_checktip" ></span>
+					</dt>
+					<input type="checkbox" id="remember" name="remember" value="0"/>
+					<i style="color: #fff;">记住我</i>
+				</dl>
+				<input type="submit" value="登录" class="btn" />
+			</form>
+			</div>
+		</div>
+</body>
+<script src="/js/flavr/flavr.js" type="text/javascript"></script>
+<script src="/js/jquery.sgfmform.js" type="text/javascript"></script>
+<script src="/js/globalMsg.js" type="text/javascript"></script>
+<script src="/js/js.cookie.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	var account = Cookies.get('hs_account');
+	var password = Cookies.get('hs_password');
+	
+	if(account !== "" && account !== undefined){
+		$("#account").val(account);
+		$("#remember").prop("checked", "checked");
+		$("#remember").val("1");
+	}
+	
+	if(password !== "" && password !== undefined){
+		$("#password").val(password);
+	}
+	
+	$("#loginForm").sgfmform({
+        ajaxurl:"${ctx}/core/login.doLogin.do",
+		tiptype:2,
+		submittype:2,
+		isLogin : 1,
+		callback:function(data,url){
+			if(data.returncode == 1){
+				changeImg();
+				alertMsg({"type" : 2, "content" : data.errmsg, "close" : true, "timeout" : 2000});
+			}else{
+				window.location.href="${ctx}/";
+			}
+		}
+	});
+	
+	$(':checkbox').click(function(){
+        if($(this).is( ":checked" )){
+        	$("#remember").val(1);
+        }else{
+        	$("#remember").val(0);
+        }
+    });
+});
+
+function changeImg(){
+	$("#authCode").attr("src","/loginLicence?a="+randomChar(6));
+	$("#yzm").val("");
+}
+/**
+ *  产生随机数
+ */
+function randomChar(l) {
+	var x="123456789poiuytrewqasdfghjklmnbvcxzQWERTYUIPLKJHGFDSAZXCVBNM";
+	var tmp="";
+	for(var i=0;i< l;i++) {
+		tmp += x.charAt(Math.ceil(Math.random()*100000000)%x.length);
+	}
+	return tmp;
+}
+</script>
+</html>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ProductMap">
+
+   
+	<!-- 查询有商品的城市-->
+	<select id="findAllCity" resultClass="java.util.HashMap">
+		select id,substr(title, 0, length(title)-1 ) as title,area_code,city_code,parentid from t_area 
+		where id in(select city from t_hospital_entity where is_cooperate = 1) order by title asc
+	</select>
+
+   <sql id="newproductCondition">
+           <isNotEmpty prepend=" AND " property="price">  
+            	<isEqual property="price" compareValue="1">
+            		 (NVL(p.shop_price,0)<![CDATA[<]]> 500) 
+            	</isEqual>
+            	<isEqual property="price" compareValue="2">
+            		 (NVL(p.shop_price,0) <![CDATA[>=]]> 500 and NVL(p.shop_price,0) <![CDATA[<=]]> 1000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="3">
+            		 (NVL(p.shop_price,0) <![CDATA[>=]]> 1001 and NVL(p.shop_price,0) <![CDATA[<=]]> 2000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="4">
+            	 (NVL(p.shop_price,0) <![CDATA[>=]]> 2001 and NVL(p.shop_price,0) <![CDATA[<=]]> 3000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="5">
+            		(NVL(p.shop_price,0) <![CDATA[>=]]> 3001 and NVL(p.shop_price,0) <![CDATA[<=]]> 5000)
+            	</isEqual>
+            	<isEqual property="price" compareValue="6">
+            		( NVL(p.shop_price,0) <![CDATA[>]]> 5000)
+            	</isEqual>
+          </isNotEmpty>
+          <!-- 新增对性别的筛选  begin-->
+          <isNotEmpty prepend="AND" property="proSex">
+          		p.sex = #proSex#
+          </isNotEmpty>
+          <!-- 新增对性别的筛选  end-->
+          <isNotEmpty  prepend="and" property="majorList">
+          p.pid in
+          <iterate  property="majorList" open="(" close=")" conjunction=",">
+            #majorList[].PRODUCT_ID#   
+		 </iterate>
+         </isNotEmpty>
+         <isNotEmpty property="priceCustom">
+           	$priceCustom$
+         </isNotEmpty>
+    </sql>
+    <!-- 根据条件获取体检套餐 -->
+	<select id="findProductListByCondition" resultClass="java.util.HashMap">
+		<include refid="BaseMap.oraPageSqlPrefix2"/>
+		SELECT p.pid,
+		NVL(p.shop_price,0) AS shop_price,
+		(100+NVL(counts2.ct,0))AS count,
+		row_number() over (ORDER BY  
+           <isEmpty property="paixu">
+             (100+NVL(counts2.ct,0)) desc,NVL(p.shop_price,0) asc,p.pid desc
+           </isEmpty>
+          		<isEqual property="paixu"  compareValue="countssdesc">
+            		(100+NVL(counts2.ct,0)) desc
+            	</isEqual>
+            	<isEqual property="paixu"  compareValue="countssasc">
+            		(100+NVL(counts2.ct,0)) asc
+            	</isEqual>
+            	<isEqual property="paixu"  compareValue="pricessdesc">
+            		 NVL(p.shop_price,0) desc
+            	</isEqual>
+            	<isEqual property="paixu"  compareValue="pricessasc">
+            		 NVL(p.shop_price,0) asc
+            	</isEqual>
+         ) midTab_id
+		FROM s_product p
+		inner JOIN (select distinct pid from s_product_entity spe
+	    inner JOIN t_hospital_entity the ON the.esid = spe.esid
+	    inner JOIN t_car_services tcs ON tcs.csid = the.csid
+	    inner JOIN t_brand tb ON tb.id = tcs.brand_id
+	    WHERE tcs.is_cooperate = 1 AND the.is_cooperate = 1 AND the.city = #city#
+	     <dynamic>
+        <isNotEmpty prepend=" AND " property="brand_Id">  
+           	tb.id = #brand_Id#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="categoryidOne">  
+          exists (select pid from s_product_type spt where key=#categoryidOne# and spt.pid=spe.pid)
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="categoryidTwo">  
+          exists (select pid from s_product_type spt where key=#categoryidTwo# and spt.pid=spe.pid)
+        </isNotEmpty>
+        </dynamic>
+	    ) counts on counts.pid = p.pid
+	    LEFT join (SELECT dis.pid,COUNT(1) AS ct FROM( SELECT DISTINCT rid,pid from s_reservation) dis GROUP BY dis.pid) counts2 on counts2.pid = p.pid
+	    where p.status = 2 AND p.product_type = 1 AND p.pscope in (1,3)
+         <include refid="newproductCondition"/>
+		<include refid="BaseMap.oraPageSqlSuffix2"/>
+	</select>
+	
+	
+	 <!-- 根据条件获取体检套餐查总数 -->  
+    <select id="countProductByCondition" resultClass="int" parameterClass="java.util.HashMap">
+        SELECT count(p.pid)
+		FROM s_product p
+		inner JOIN (select distinct pid from s_product_entity spe
+	    inner JOIN t_hospital_entity the ON the.esid = spe.esid
+	    inner JOIN t_car_services tcs ON tcs.csid = the.csid
+	    inner JOIN t_brand tb ON tb.id = tcs.brand_id
+	    WHERE tcs.is_cooperate = 1 AND the.is_cooperate = 1 AND the.city = #city#
+	    <dynamic>
+        <isNotEmpty prepend=" AND " property="brand_Id">  
+           	tb.id = #brand_Id#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="categoryidOne">  
+          exists (select pid from s_product_type spt where key=#categoryidOne# and spt.pid=spe.pid)
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="categoryidTwo">  
+          exists (select pid from s_product_type spt where key=#categoryidTwo# and spt.pid=spe.pid)
+        </isNotEmpty>
+        </dynamic>
+	    ) counts on counts.pid = p.pid
+	    where p.status = 2 AND p.product_type = 1 AND p.pscope in (1,3)
+        <include refid="newproductCondition"/>
+    </select>
+    
+    <select id="getCouponByPid" resultClass="java.util.HashMap">
+    	select price from s_product_coupon spc 
+	    inner join s_product_coupon_relation spcr on spc.id = spcr.cid
+	    where pid = #pid#
+    </select>
+    
+    <select id="findEsidExist" resultClass="java.lang.Integer">
+		SELECT count(1) FROM t_hospital_entity WHERE esid = #esid# and city=#id#
+	</select>
+	
+	<select id="findPidExist" resultClass="java.lang.Integer">
+		SELECT count(1) FROM s_product WHERE pid = #pid#
+	</select>
+	
+	<select id="findProductByCityAndPid" resultClass="java.util.HashMap">
+	   SELECT * FROM s_product  p
+       INNER JOIN s_product_entity  spe ON spe.pid = p.pid
+       INNER JOIN t_hospital_entity the ON the.esid = spe.esid
+       WHERE the.is_cooperate = 1 AND p.status = 2 
+       AND p.pid=#pid# AND the.city=#id#  
+      <isEqual property="shaixuan" compareValue="1">
+      AND p.pscope IN (2,3)
+      </isEqual>
+      <isEqual property="shaixuan" compareValue="2">
+      AND p.pscope IN (1,3)
+      </isEqual>
+	</select>
+	
+	<!-- 统计单个商品的销量 -->
+	<select id="countSalesByPid" resultClass="java.lang.Integer">
+	    SELECT (100+NVL(counts.ct,0))AS count
+	    FROM s_product p 
+	    LEFT JOIN (SELECT dis.pid,COUNT(1) AS ct FROM( SELECT DISTINCT rid,pid from s_reservation) dis GROUP BY dis.pid) counts 
+	    ON counts.pid = p.pid
+	    WHERE p.pid = #pid#
+	</select>
+
+</sqlMap>
+
+
+

@@ -1,0 +1,14 @@
+/**/
+.protip{ line-height: 2.0rem; background-color: #fff; font-size: 0.65rem; font-weight: bold; color: #716f6f; border-bottom: #e8e8e8 1px solid;}
+.peobox{ background-color: #fff; font-size: 12px; color: #716f6f; line-height: 20px; margin: 0 0.5rem;}
+.peobox p{ margin: 0; line-height: 2.0rem; height: 2.0rem; border-bottom: #e8e8e8 1px solid; font-size: 0.65rem; color: #929191;}
+.peobox p:last-child{border-bottom: none;}
+.peobox p span{display: block; float: left;}
+.peobox p span:last-child{color: #6e6e6f; float: right;}
+.peobox p span.blue{height: 2.0rem; overflow: hidden; width: 76%; text-align: right;}
+.peobox p span.red{color: #e25d39;}
+
+.remark{background-color: #fff; font-size: 12px; color: #716f6f; line-height: 20px; margin: 0 0.5rem; padding: 0 0 1rem 0;}
+.remark p{margin: 0; line-height: 2.0rem; height: 2.0rem; border-top: #e8e8e8 1px solid; font-size: 0.65rem; color: #929191;}
+.remark textarea{height: 2.5rem; width: 100%; border: #e8e8e8 1px solid; border-radius: 0.125rem; outline: none; resize: none; padding: 0.125rem;}
+

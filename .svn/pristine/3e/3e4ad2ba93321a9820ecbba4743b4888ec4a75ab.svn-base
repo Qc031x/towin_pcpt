@@ -1,0 +1,59 @@
+package com.sgfm.datacenter;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 用于常量定义类
+ * 
+ * @author 
+ * @date 
+ */
+
+@SuppressWarnings("serial")
+public class SysConstant { 
+    // //////通用的常量//////////////////////////////////////////////
+
+    /** 系统保留字符 */
+	
+	/**
+	 * 保存tmember登入成功信息
+	 */
+    public static final String SYS_MEMBER_LOG_SUCC_INFO = "memberLogSuccInfo_revpt";
+    /**
+    * 保存account信息
+    */
+    public static final String SYS_ACCOUNT_LOG_SUCC_INFO = "account_log_succ_info_revpt";
+    /**
+     * 保存进入商品详情页地址
+     */
+    public static final String SYS_PRODUCT_DETAILS_URL = "product_details_url_revpt";
+    /*
+     * 保存城市id
+     */
+    public static final String SYS_CITYID = "localCityId_revpt";
+    public static final String SYS_CITYNAME = "cityname_revpt";
+    public static final String SYS_CITYAREANO = "cityareano_revpt";
+    
+    /**
+     * Cookie生命周期
+     */
+    public static final int COOKIE_LIFRCYCLE_DELETE = 0; //立即删除
+    public static final int COOKIE_LIFRCYCLE_NOWADAY = -1; //无生命周期
+    public static final int COOKIE_LIFRCYCLE_AWEEK = 60 * 60 * 24 * 7; //一周
+    public static final int COOKIE_LIFRCYCLE_AMONTH = 60 * 60 * 24 * 30; //30天
+    
+    /**
+     * 短信发送限制条数
+     */
+    public static final int MSG_CHECKCOUNT = 100; //当天限制短信条数
+    
+    public static final int MSG_SINGLE_CHECKCOUNT = 20; //当天单个用户短信限制条数
+    
+	public static final String YK_TOKEN = "yk_token";
+	
+	public static final String OPENID = "openid";
+	
+	public static final String IS_MEMBER = "is_member"; //1没有openid记录  2有openid没有注册  3有openid并且注册
+	
+}
